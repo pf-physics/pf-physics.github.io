@@ -75,10 +75,8 @@ view : Html Msg
 view =
   div [ css [padding (px 30)] ]
   [ h1 [css [displayFlex, justifyContent center] ] [ text "CV" ]
-  , h2 [css [displayFlex, justifyContent center] ] [ text "I do things sometimes" ]
-  --, p [] [ text mdl.test ]
+  , h2 [css [displayFlex, justifyContent center] ] [ text "This page is under construction and will soon contain examples of projects I've worked on." ]
   , div [ css [ displayFlex, justifyContent center ] ]
     [ button [ onClick DownloadFile, css buttonStyles ] [ text "Download CV" ]
     ]
-  , button [ onClick DownloadFrog, css buttonStyles ] [ text "Download frog" ]
   ]

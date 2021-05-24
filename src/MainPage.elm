@@ -39,10 +39,13 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [ css [padding (px 30)] ]
-  [ h1 [css [displayFlex, justifyContent center] ] [ text "Main page" ]
-  , h2 [css [displayFlex, justifyContent center] ] [ text "Welcome" ]
-  , div [ css [ displayFlex, justifyContent center ] ]
-    [ img [ src "Files/placeHolder.gif"] []
+  [ h1 [css [displayFlex, justifyContent center, paddingBottom (px 50)] ] [ text "Sacha Perry-Fagant" ]
+  -- , h2 [css [displayFlex, justifyContent center] ] [ text "Welcome" ]
+  , div [ css [ displayFlex, justifyContent left ] ]
+    [ div [css [ displayFlex, justifyContent center, Css.width (pct 100)] ]  [ img [ src "Files/SPF.jpg", css [Css.height (px 300)]] [] ]
+    , p [ css [ fontSize (px 20), Css.width (pct 200)] ]
+      [ p [] [text "I am a physicist and software developer interested in cosmology and gravity."]
+      , p [] [text "I am currently searching for a PhD in physics"]
+      ]
     ]
-  , p [ css [ fontSize (px 20)] ] [ text "I am currently searching for a PhD in physics"]
   ]

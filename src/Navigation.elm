@@ -44,7 +44,7 @@ viewTabs page =
 
 
 pageList: List (String, Page)
-pageList = [("#main", Main), ("#redshift", Redshift), ("#CV", CV ), ("#apis", APITest)]
+pageList = [("#main", Main), ("#CV", CV ), ("#misc", APITest)] -- ("#redshift", Redshift),
 
 pageMap: Dict String Page
 pageMap =

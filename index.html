@@ -6446,9 +6446,8 @@ var $elm$core$Dict$fromList = function (assocs) {
 var $author$project$Navigation$pageList = _List_fromArray(
 	[
 		_Utils_Tuple2('#main', $author$project$Navigation$Main),
-		_Utils_Tuple2('#redshift', $author$project$Navigation$Redshift),
 		_Utils_Tuple2('#CV', $author$project$Navigation$CV),
-		_Utils_Tuple2('#apis', $author$project$Navigation$APITest)
+		_Utils_Tuple2('#misc', $author$project$Navigation$APITest)
 	]);
 var $author$project$Navigation$pageMap = $elm$core$Dict$fromList($author$project$Navigation$pageList);
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
@@ -9560,7 +9559,6 @@ var $author$project$APIPage$view = function (model) {
 			]));
 };
 var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
-var $author$project$CVPage$DownloadFrog = {$: 'DownloadFrog'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
 var $rtfeldman$elm_css$Css$prop3 = F4(
@@ -9838,7 +9836,7 @@ var $author$project$CVPage$view = A2(
 				]),
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text('I do things sometimes')
+					$rtfeldman$elm_css$Html$Styled$text('This page is under construction and will soon contain examples of projects I\'ve worked on.')
 				])),
 			A2(
 			$rtfeldman$elm_css$Html$Styled$div,
@@ -9864,19 +9862,14 @@ var $author$project$CVPage$view = A2(
 						[
 							$rtfeldman$elm_css$Html$Styled$text('Download CV')
 						]))
-				])),
-			A2(
-			$rtfeldman$elm_css$Html$Styled$button,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadFrog),
-					$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
-				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text('Download frog')
 				]))
 		]));
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
+var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $rtfeldman$elm_css$Css$paddingBottom = $rtfeldman$elm_css$Css$prop1('padding-bottom');
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$MainPage$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -9899,27 +9892,14 @@ var $author$project$MainPage$view = function (model) {
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+								$rtfeldman$elm_css$Css$paddingBottom(
+								$rtfeldman$elm_css$Css$px(50))
 							]))
 					]),
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text('Main page')
-					])),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$h2,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-							]))
-					]),
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('Welcome')
+						$rtfeldman$elm_css$Html$Styled$text('Sacha Perry-Fagant')
 					])),
 				A2(
 				$rtfeldman$elm_css$Html$Styled$div,
@@ -9929,40 +9909,76 @@ var $author$project$MainPage$view = function (model) {
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left)
 							]))
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$rtfeldman$elm_css$Html$Styled$img,
+						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$Attributes$src('Files/placeHolder.gif')
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(100))
+									]))
 							]),
-						_List_Nil)
-					])),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$p,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Css$fontSize(
-								$rtfeldman$elm_css$Css$px(20))
+								A2(
+								$rtfeldman$elm_css$Html$Styled$img,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$src('Files/SPF.jpg'),
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Css$height(
+												$rtfeldman$elm_css$Css$px(300))
+											]))
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$p,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$fontSize(
+										$rtfeldman$elm_css$Css$px(20)),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(200))
+									]))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text('I am a physicist and software developer interested in cosmology and gravity.')
+									])),
+								A2(
+								$rtfeldman$elm_css$Html$Styled$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text('I am currently searching for a PhD in physics')
+									]))
 							]))
-					]),
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('I am currently searching for a PhD in physics')
 					]))
 			]));
 };
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
 var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
 var $rtfeldman$elm_css$Css$textDecoration = $rtfeldman$elm_css$Css$prop1('text-decoration');
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$Tab$activeCss = $rtfeldman$elm_css$Html$Styled$Attributes$css(
 	_List_fromArray(
 		[
@@ -10006,7 +10022,6 @@ var $rtfeldman$elm_css$Css$alignItems = function (fn) {
 		'align-items',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $author$project$Tab$tabsWrapper = function (tabs) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10088,7 +10103,7 @@ var $author$project$Main$view = function (model) {
 						var _v0 = model.currentPage;
 						switch (_v0.$) {
 							case 'Redshift':
-								return $elm$html$Html$text('This will be the redshift page... later');
+								return $elm$html$Html$text('This page is under construction');
 							case 'APITest':
 								var _v1 = model.apiModel;
 								if (_v1.$ === 'Just') {
@@ -10121,7 +10136,7 @@ var $author$project$Main$view = function (model) {
 						}
 					}())
 				])),
-		title: 'Soup time'
+		title: 'Sacha Perry-Fagant'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$application(

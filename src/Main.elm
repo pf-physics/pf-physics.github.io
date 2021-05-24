@@ -154,7 +154,7 @@ view model =
     title = Url.toString model.url
 
   in
-    { title = "Soup time"
+    { title = "Sacha Perry-Fagant"
     , body =
         [ Css.Global.global
             [ Css.Global.body
@@ -166,7 +166,7 @@ view model =
         , viewTabs model.currentPage
         , fromUnstyled (text (Maybe.withDefault "" model.message))
         , fromUnstyled (case model.currentPage of
-              Redshift -> text "This will be the redshift page... later"
+              Redshift -> text "This page is under construction"
 
               APITest ->
                 case model.apiModel of
@@ -184,8 +184,6 @@ view model =
         ] |> List.map toUnstyled
     }
 
--- The Repo name, will change eventually
-websiteTitle = "Tests"
 
 viewLink : String -> Html msg
 viewLink path =
