@@ -8,11 +8,13 @@ import Html.Styled.Events exposing (..)
 import Browser
 import Http
 import Json.Decode exposing (Decoder, field, string, map2)
+import Json.Encode
+import Css
 
 -- MODEL
 
 type alias Model =
-  { nasaImage : ApiStatus String
+  { nasaImage : ApiStatus NasaImage
   , randomJoke : ApiStatus Joke
   }
 
@@ -27,7 +29,7 @@ init _ =
   ( Model Loading Loading
   , Cmd.batch
    [ Http.get
-      { url = "https://api.nasa.gov/planetary/apod?api_key=E5I1roOsvZvSKbJFALNAnoHqD12FNcmL8uoARAd3" -- "http://api.fungenerators.com/fact/random"
+      { url = "https://api.nasa.gov/planetary/apod?api_key=E5I1roOsvZvSKbJFALNAnoHqD12FNcmL8uoARAd3"
       , expect = Http.expectJson GotImage imageDecoder
       }
     , Http.get
@@ -42,7 +44,7 @@ init _ =
 -- UPDATE
 
 type Msg
-  = GotImage (Result Http.Error String)
+  = GotImage (Result Http.Error NasaImage)
   | GotJoke (Result Http.Error Joke)
 
 
@@ -69,9 +71,14 @@ update msg model =
 -- VIEW
 
 
-imageDecoder: Decoder String
-imageDecoder = field "url" string
+imageDecoder: Decoder NasaImage
+imageDecoder = map2 NasaImage (field "url" string) (field "media_type" string)
 
+
+type alias NasaImage =
+  { url : String
+  , mediaType : String
+  }
 
 type alias Joke =
   { setup: String
@@ -133,7 +140,18 @@ view model =
       text "Loading..."
 
     Success image ->
-        img [src (image)] []
+        if image.mediaType == "video"
+        then
+          (iframe
+            [ width 560
+            , height 315
+            , css [ Css.marginBottom (Css.px 30)]
+            , src image.url
+            , property "frameborder" (Json.Encode.string "0")
+            , property "allowfullscreen" (Json.Encode.string "true")
+            ]
+            [])
+        else img [src (image.url)] []
       )
     ]
   ]
