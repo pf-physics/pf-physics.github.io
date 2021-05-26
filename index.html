@@ -9797,8 +9797,8 @@ var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-l
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
 var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  eective theory up to rst order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the \r\n  uid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory{La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
-var $rtfeldman$elm_css$Css$prop2 = F3(
-	function (key, argA, argB) {
+var $rtfeldman$elm_css$Css$prop4 = F5(
+	function (key, argA, argB, argC, argD) {
 		return A2(
 			$rtfeldman$elm_css$Css$property,
 			key,
@@ -9806,9 +9806,9 @@ var $rtfeldman$elm_css$Css$prop2 = F3(
 				$elm$core$String$join,
 				' ',
 				_List_fromArray(
-					[argA.value, argB.value])));
+					[argA.value, argB.value, argC.value, argD.value])));
 	});
-var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $rtfeldman$elm_css$Css$margin4 = $rtfeldman$elm_css$Css$prop4('margin');
 var $author$project$CVPage$viewAcademic = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -9816,8 +9816,10 @@ var $author$project$CVPage$viewAcademic = A2(
 			$rtfeldman$elm_css$Html$Styled$Attributes$css(
 			_List_fromArray(
 				[
-					A2(
-					$rtfeldman$elm_css$Css$margin2,
+					A4(
+					$rtfeldman$elm_css$Css$margin4,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(60),
 					$rtfeldman$elm_css$Css$px(0),
 					$rtfeldman$elm_css$Css$px(30))
 				]))
@@ -9998,6 +10000,17 @@ var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
 var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
 var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
 var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value])));
+	});
 var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $author$project$CVPage$buttonStyles = _List_fromArray(
@@ -10035,6 +10048,7 @@ var $author$project$CVPage$buttonStyles = _List_fromArray(
 				$rtfeldman$elm_css$Css$px(10))
 			]))
 	]);
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
 var $author$project$CVPage$viewWork = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(

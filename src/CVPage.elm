@@ -120,13 +120,13 @@ abstract = """Black holes in dimensions > 4 can take on new properties and topol
   obtained by applying the 
   uid/gravity correspondence. Using results obtained
   in this manner, we examine the expected higher order metrics and associated
-  energy-momentum tensors. We review the comparison of the Gregory{La
+  energy-momentum tensors. We review the comparison of the Gregory-La
   amme
   instability to hydrodynamic perturbations."""
 
 viewAcademic : Html Msg
 viewAcademic =
-  div [ css [margin2 (px 0) (px 30)]]
+  div [ css [margin4 (px 0) (px 60) (px 0) (px 30)]]
   [ h3 [] [ text "My academic interests and experience lie in theoretical and computational physics"]
   , h2 [] [ text "Master's thesis:"]
   , h3 [] [ text "Abstract" ]
