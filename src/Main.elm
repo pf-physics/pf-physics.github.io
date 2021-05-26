@@ -39,6 +39,7 @@ type alias Model =
   , url : Url.Url
   , mainModel : (Maybe MainPage.Model)
   , apiModel : (Maybe APIPage.Model )
+  , cvModel : (Maybe CVPage.Model)
   , message : Maybe String
   , currentPage : Page
   }
@@ -48,7 +49,7 @@ init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let
     -- ( mdl, msg ) = MainPage.init ()
-    ( mdl, msg ) = update (UrlChanged url) (Model key url Nothing Nothing Nothing Main )
+    ( mdl, msg ) = update (UrlChanged url) (Model key url Nothing Nothing Nothing Nothing Main )
   in
   ( mdl , msg ) -- Cmd.map IndexPage msg
 
@@ -79,7 +80,7 @@ update msg model =
         Browser.External href ->
           ( model, Nav.load href )
 
-    UrlChanged url -> -- PATTERN MATCH on the page YAH TODO, also only if doesn't already exist, do init
+    UrlChanged url -> -- TODO if doesn't already exist, do init
       let
         -- This is only being done to allow # routing, normally would use parser
         urlString = Maybe.map (\v -> "#" ++ v) (List.head (List.reverse (String.split "#" (Url.toString url))))
@@ -106,7 +107,10 @@ update msg model =
                 ({ model | url = url, currentPage = Redshift }, Cmd.none )
 
               CV ->
-                ({ model | url = url, currentPage = CV }, Cmd.none )
+                let
+                  (m,c) = CVPage.init ()
+                in
+                ({ model | url = url, cvModel = Just m, currentPage = CV }, Cmd.map CVMsg c )
 
           _ ->
             let
@@ -135,7 +139,15 @@ update msg model =
                       ( model, Cmd.none )
 
     CVMsg c ->
-          ( model, Cmd.map CVMsg (CVPage.update c) )
+      case model.cvModel of
+                    Just mdl ->
+                      let
+                        (m, cmd) = CVPage.update c mdl
+                      in
+                      ({ model | cvModel = Just m }, Cmd.map CVMsg cmd)
+
+                    Nothing ->
+                      ( model, Cmd.none )
 
 
 -- SUBSCRIPTIONS
@@ -176,7 +188,10 @@ view model =
                   Nothing -> text "Page load fail"
 
               CV ->
-                (toUnstyled CVPage.view |> Html.map CVMsg)
+                case model.cvModel of
+                  Just cvMdl ->
+                    (toUnstyled (CVPage.view cvMdl) |> Html.map CVMsg)
+                  Nothing -> text "Page load fail"
 
               Main ->
                 case model.mainModel of

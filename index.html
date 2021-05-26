@@ -5555,9 +5555,9 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Navigation$Main = {$: 'Main'};
-var $author$project$Main$Model = F6(
-	function (key, url, mainModel, apiModel, message, currentPage) {
-		return {apiModel: apiModel, currentPage: currentPage, key: key, mainModel: mainModel, message: message, url: url};
+var $author$project$Main$Model = F7(
+	function (key, url, mainModel, apiModel, cvModel, message, currentPage) {
+		return {apiModel: apiModel, currentPage: currentPage, cvModel: cvModel, key: key, mainModel: mainModel, message: message, url: url};
 	});
 var $author$project$Main$APIMsg = function (a) {
 	return {$: 'APIMsg', a: a};
@@ -6417,11 +6417,21 @@ var $author$project$APIPage$init = function (_v0) {
 					})
 				])));
 };
+var $author$project$CVPage$Academic = {$: 'Academic'};
+var $author$project$CVPage$Model = F3(
+	function (test, message, tab) {
+		return {message: message, tab: tab, test: test};
+	});
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$CVPage$init = function (_v0) {
+	return _Utils_Tuple2(
+		A3($author$project$CVPage$Model, 'Starting it up', $elm$core$Maybe$Nothing, $author$project$CVPage$Academic),
+		$elm$core$Platform$Cmd$none);
+};
 var $author$project$MainPage$Model = F2(
 	function (test, message) {
 		return {message: message, test: test};
 	});
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$MainPage$init = function (_v0) {
 	return _Utils_Tuple2(
 		A2($author$project$MainPage$Model, 'Starting it up', $elm$core$Maybe$Nothing),
@@ -6462,7 +6472,7 @@ var $author$project$Navigation$pageList = _List_fromArray(
 		A2($author$project$Navigation$PageInfo, 'Home', $author$project$Navigation$Main)),
 		_Utils_Tuple2(
 		'#CV',
-		A2($author$project$Navigation$PageInfo, 'CV', $author$project$Navigation$CV)),
+		A2($author$project$Navigation$PageInfo, 'Experience', $author$project$Navigation$CV)),
 		_Utils_Tuple2(
 		'#misc',
 		A2($author$project$Navigation$PageInfo, 'Misc', $author$project$Navigation$APITest))
@@ -6577,16 +6587,22 @@ var $elm$file$File$Download$url = function (href) {
 };
 var $author$project$CVPage$downloadCV = $elm$file$File$Download$url('Files/CV.pdf');
 var $author$project$CVPage$saveFrog = $elm$file$File$Download$url('Files/frog.jpg');
-var $author$project$CVPage$update = function (msg) {
-	switch (msg.$) {
-		case 'DownloadFile':
-			return $author$project$CVPage$downloadCV;
-		case 'DownloadFrog':
-			return $author$project$CVPage$saveFrog;
-		default:
-			return $elm$core$Platform$Cmd$none;
-	}
-};
+var $author$project$CVPage$update = F2(
+	function (msg, mdl) {
+		switch (msg.$) {
+			case 'DownloadFile':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$downloadCV);
+			case 'DownloadFrog':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$saveFrog);
+			default:
+				var tab = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						mdl,
+						{tab: tab}),
+					$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$MainPage$update = F2(
 	function (msg, model) {
 		var s = msg.a;
@@ -6674,16 +6690,23 @@ var $author$project$Main$update = F2(
 									{currentPage: $author$project$Navigation$Redshift, url: url}),
 								$elm$core$Platform$Cmd$none);
 						default:
+							var _v6 = $author$project$CVPage$init(_Utils_Tuple0);
+							var m = _v6.a;
+							var c = _v6.b;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{currentPage: $author$project$Navigation$CV, url: url}),
-								$elm$core$Platform$Cmd$none);
+									{
+										currentPage: $author$project$Navigation$CV,
+										cvModel: $elm$core$Maybe$Just(m),
+										url: url
+									}),
+								A2($elm$core$Platform$Cmd$map, $author$project$Main$CVMsg, c));
 					}
 				} else {
-					var _v6 = $author$project$MainPage$init(_Utils_Tuple0);
-					var m = _v6.a;
-					var c = _v6.b;
+					var _v7 = $author$project$MainPage$init(_Utils_Tuple0);
+					var m = _v7.a;
+					var c = _v7.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6696,12 +6719,12 @@ var $author$project$Main$update = F2(
 				}
 			case 'MainMsg':
 				var b = msg.a;
-				var _v7 = model.mainModel;
-				if (_v7.$ === 'Just') {
-					var a = _v7.a;
-					var _v8 = A2($author$project$MainPage$update, b, a);
-					var m = _v8.a;
-					var c = _v8.b;
+				var _v8 = model.mainModel;
+				if (_v8.$ === 'Just') {
+					var a = _v8.a;
+					var _v9 = A2($author$project$MainPage$update, b, a);
+					var m = _v9.a;
+					var c = _v9.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6714,12 +6737,12 @@ var $author$project$Main$update = F2(
 				}
 			case 'APIMsg':
 				var b = msg.a;
-				var _v9 = model.apiModel;
-				if (_v9.$ === 'Just') {
-					var a = _v9.a;
-					var _v10 = A2($author$project$APIPage$update, b, a);
-					var m = _v10.a;
-					var c = _v10.b;
+				var _v10 = model.apiModel;
+				if (_v10.$ === 'Just') {
+					var a = _v10.a;
+					var _v11 = A2($author$project$APIPage$update, b, a);
+					var m = _v11.a;
+					var c = _v11.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6732,12 +6755,22 @@ var $author$project$Main$update = F2(
 				}
 			default:
 				var c = msg.a;
-				return _Utils_Tuple2(
-					model,
-					A2(
-						$elm$core$Platform$Cmd$map,
-						$author$project$Main$CVMsg,
-						$author$project$CVPage$update(c)));
+				var _v12 = model.cvModel;
+				if (_v12.$ === 'Just') {
+					var mdl = _v12.a;
+					var _v13 = A2($author$project$CVPage$update, c, mdl);
+					var m = _v13.a;
+					var cmd = _v13.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								cvModel: $elm$core$Maybe$Just(m)
+							}),
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$CVMsg, cmd));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$init = F3(
@@ -6745,7 +6778,7 @@ var $author$project$Main$init = F3(
 		var _v0 = A2(
 			$author$project$Main$update,
 			$author$project$Main$UrlChanged(url),
-			A6($author$project$Main$Model, key, url, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $author$project$Navigation$Main));
+			A7($author$project$Main$Model, key, url, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $author$project$Navigation$Main));
 		var mdl = _v0.a;
 		var msg = _v0.b;
 		return _Utils_Tuple2(mdl, msg);
@@ -9684,85 +9717,6 @@ var $author$project$APIPage$view = function (model) {
 					]))
 			]));
 };
-var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
-var $rtfeldman$elm_css$Css$prop3 = F4(
-	function (key, argA, argB, argC) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value, argC.value])));
-	});
-var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
-var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
-var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
-var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
-var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
-	var value = _v0.value;
-	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
-};
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 'ExtendSelector', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 'PseudoClassSelector', a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
-var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
-var $rtfeldman$elm_css$Css$prop2 = F3(
-	function (key, argA, argB) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value])));
-	});
-var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
-var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
-var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
-var $author$project$CVPage$buttonStyles = _List_fromArray(
-	[
-		A2(
-		$rtfeldman$elm_css$Css$padding2,
-		$rtfeldman$elm_css$Css$px(10),
-		$rtfeldman$elm_css$Css$px(25)),
-		$rtfeldman$elm_css$Css$fontSize(
-		$rtfeldman$elm_css$Css$px(20)),
-		$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
-		$rtfeldman$elm_css$Css$color(
-		$rtfeldman$elm_css$Css$hex('#ffffff')),
-		$rtfeldman$elm_css$Css$backgroundColor(
-		$rtfeldman$elm_css$Css$hex('#530082')),
-		$rtfeldman$elm_css$Css$borderRadius(
-		$rtfeldman$elm_css$Css$px(6)),
-		A3(
-		$rtfeldman$elm_css$Css$border3,
-		$rtfeldman$elm_css$Css$px(1),
-		$rtfeldman$elm_css$Css$solid,
-		$rtfeldman$elm_css$Css$hex('#3f0e48')),
-		A2($rtfeldman$elm_css$Css$property, 'font-family', 'calibri'),
-		$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
-		$rtfeldman$elm_css$Css$hover(
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Css$backgroundColor(
-				$rtfeldman$elm_css$Css$hex('#380057')),
-				$rtfeldman$elm_css$Css$borderRadius(
-				$rtfeldman$elm_css$Css$px(10))
-			]))
-	]);
 var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
 var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
 var $rtfeldman$elm_css$Css$Preprocess$ApplyStyles = function (a) {
@@ -9837,6 +9791,86 @@ var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 		'justify-content',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
+var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
+var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-left');
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
+var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  eective theory up to rst order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the \r\n  uid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory{La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value])));
+	});
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $author$project$CVPage$viewAcademic = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('My academic interests and experience lie in theoretical and computational physics')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h2,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Master\'s thesis:')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Abstract')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text($author$project$CVPage$abstract)
+				]))
+		]));
+var $author$project$CVPage$Hobbies = {$: 'Hobbies'};
+var $author$project$CVPage$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var $author$project$CVPage$Work = {$: 'Work'};
+var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
+var $rtfeldman$elm_css$Css$column = _Utils_update(
+	$rtfeldman$elm_css$Css$row,
+	{value: 'column'});
+var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
+var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
+var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
+	var value = _v0.value;
+	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
+};
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9862,82 +9896,266 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
-var $author$project$CVPage$view = A2(
+var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $author$project$CVPage$viewTabs = function () {
+	var tabStyles = $rtfeldman$elm_css$Html$Styled$Attributes$css(
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$padding(
+				$rtfeldman$elm_css$Css$px(25)),
+				$rtfeldman$elm_css$Css$displayFlex,
+				$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+				A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
+				$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer)
+			]));
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+						$rtfeldman$elm_css$Css$width(
+						$rtfeldman$elm_css$Css$pct(10)),
+						$rtfeldman$elm_css$Css$borderRadius(
+						$rtfeldman$elm_css$Css$px(20)),
+						$rtfeldman$elm_css$Css$backgroundColor(
+						$rtfeldman$elm_css$Css$hex('#424242')),
+						$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
+						$rtfeldman$elm_css$Css$height(
+						$rtfeldman$elm_css$Css$pct(100))
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Academic)),
+						tabStyles
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Academic')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Work)),
+						tabStyles
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Work')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Hobbies)),
+						tabStyles
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Hobbies')
+					]))
+			]));
+}();
+var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$prop3 = F4(
+	function (key, argA, argB, argC) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value])));
+	});
+var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
+var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $author$project$CVPage$buttonStyles = _List_fromArray(
+	[
+		A2(
+		$rtfeldman$elm_css$Css$padding2,
+		$rtfeldman$elm_css$Css$px(10),
+		$rtfeldman$elm_css$Css$px(25)),
+		$rtfeldman$elm_css$Css$fontSize(
+		$rtfeldman$elm_css$Css$px(20)),
+		$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
+		$rtfeldman$elm_css$Css$color(
+		$rtfeldman$elm_css$Css$hex('#ffffff')),
+		$rtfeldman$elm_css$Css$backgroundColor(
+		$rtfeldman$elm_css$Css$hex('#530082')),
+		$rtfeldman$elm_css$Css$borderRadius(
+		$rtfeldman$elm_css$Css$px(6)),
+		A3(
+		$rtfeldman$elm_css$Css$border3,
+		$rtfeldman$elm_css$Css$px(1),
+		$rtfeldman$elm_css$Css$solid,
+		$rtfeldman$elm_css$Css$hex('#3f0e48')),
+		A2($rtfeldman$elm_css$Css$property, 'font-family', 'calibri'),
+		$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
+		$rtfeldman$elm_css$Css$maxHeight(
+		$rtfeldman$elm_css$Css$px(60)),
+		$rtfeldman$elm_css$Css$maxWidth(
+		$rtfeldman$elm_css$Css$px(200)),
+		$rtfeldman$elm_css$Css$hover(
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$backgroundColor(
+				$rtfeldman$elm_css$Css$hex('#380057')),
+				$rtfeldman$elm_css$Css$borderRadius(
+				$rtfeldman$elm_css$Css$px(10))
+			]))
+	]);
+var $author$project$CVPage$viewWork = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
 		[
 			$rtfeldman$elm_css$Html$Styled$Attributes$css(
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Css$padding(
+					$rtfeldman$elm_css$Css$displayFlex,
+					$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+					$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
 					$rtfeldman$elm_css$Css$px(30))
 				]))
 		]),
 	_List_fromArray(
 		[
 			A2(
-			$rtfeldman$elm_css$Html$Styled$h1,
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$displayFlex,
-							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-						]))
-				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text('CV')
+					$rtfeldman$elm_css$Html$Styled$text('I am currently working as a software developer ')
 				])),
 			A2(
-			$rtfeldman$elm_css$Html$Styled$h2,
+			$rtfeldman$elm_css$Html$Styled$button,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$displayFlex,
-							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-						]))
+					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadFile),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
 				]),
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text('This page is under construction and will soon contain examples of projects I\'ve worked on.')
-				])),
-			A2(
-			$rtfeldman$elm_css$Html$Styled$div,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$displayFlex,
-							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-						]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$button,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadFile),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Download CV')
-						]))
+					$rtfeldman$elm_css$Html$Styled$text('Download CV')
 				]))
 		]));
-var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $author$project$CVPage$view = function (mdl) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h1,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+							]))
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Experience')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h4,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+							]))
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Note - these pages are still under construction')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$padding(
+								$rtfeldman$elm_css$Css$px(10))
+							]))
+					]),
+				_List_fromArray(
+					[
+						$author$project$CVPage$viewTabs,
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$paddingLeft(
+										$rtfeldman$elm_css$Css$px(50)),
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(100))
+									]))
+							]),
+						_List_fromArray(
+							[
+								function () {
+								var _v0 = mdl.tab;
+								switch (_v0.$) {
+									case 'Academic':
+										return $author$project$CVPage$viewAcademic;
+									case 'Work':
+										return $author$project$CVPage$viewWork;
+									default:
+										return $rtfeldman$elm_css$Html$Styled$text('Under construction');
+								}
+							}()
+							]))
+					]))
+			]));
+};
 var $rtfeldman$elm_css$Css$paddingBottom = $rtfeldman$elm_css$Css$prop1('padding-bottom');
-var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
-var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$MainPage$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10057,7 +10275,9 @@ var $author$project$Tab$activeCss = $rtfeldman$elm_css$Html$Styled$Attributes$cs
 			A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
 			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none),
 			$rtfeldman$elm_css$Css$backgroundColor(
-			$rtfeldman$elm_css$Css$hex('#616161'))
+			$rtfeldman$elm_css$Css$hex('#616161')),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(10))
 		]));
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
@@ -10070,7 +10290,9 @@ var $author$project$Tab$inactiveCss = $rtfeldman$elm_css$Html$Styled$Attributes$
 			$rtfeldman$elm_css$Css$displayFlex,
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
 			A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
-			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none)
+			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(10))
 		]));
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
@@ -10175,14 +10397,21 @@ var $author$project$Main$view = function (model) {
 									return $elm$html$Html$text('Page load fail');
 								}
 							case 'CV':
-								return A2(
-									$elm$html$Html$map,
-									$author$project$Main$CVMsg,
-									$rtfeldman$elm_css$Html$Styled$toUnstyled($author$project$CVPage$view));
-							default:
-								var _v2 = model.mainModel;
+								var _v2 = model.cvModel;
 								if (_v2.$ === 'Just') {
-									var mmd = _v2.a;
+									var cvMdl = _v2.a;
+									return A2(
+										$elm$html$Html$map,
+										$author$project$Main$CVMsg,
+										$rtfeldman$elm_css$Html$Styled$toUnstyled(
+											$author$project$CVPage$view(cvMdl)));
+								} else {
+									return $elm$html$Html$text('Page load fail');
+								}
+							default:
+								var _v3 = model.mainModel;
+								if (_v3.$ === 'Just') {
+									var mmd = _v3.a;
 									return A2(
 										$elm$html$Html$map,
 										$author$project$Main$MainMsg,

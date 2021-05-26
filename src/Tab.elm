@@ -10,30 +10,23 @@ activeCss: Attribute msg
 activeCss =
     css
         [ Css.width (px 120)
-        -- , borderLeft3 (px 3) solid (hex "efefef")
-        -- , borderRight3 (px 3) solid (hex "efefef")
-        --, borderTopLeftRadius <| px 2
-        --, borderTopRightRadius <| px 2
-        --, borderRadius <| px 2
-        --, padding (px 10)
         , displayFlex
         , justifyContent center
         , Css.property "color" "white"
         , textDecoration none
         , backgroundColor (hex "#616161")
+        , padding (px 10)
         ]
 
 inactiveCss : Attribute msg
 inactiveCss =
     css
         [ Css.width (px 120)
-        -- borderBottom3 (px 3) solid (hex "efefef")
-        --, borderTop3 (px 3) solid (hex "efefef")
-        --, padding (px 10)
         , displayFlex
         , justifyContent center
         , Css.property "color" "white"
         , textDecoration none
+        , padding (px 10)
         ]
 
 
