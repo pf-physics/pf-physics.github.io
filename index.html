@@ -6451,11 +6451,21 @@ var $elm$core$Dict$fromList = function (assocs) {
 		$elm$core$Dict$empty,
 		assocs);
 };
+var $author$project$Navigation$PageInfo = F2(
+	function (name, page) {
+		return {name: name, page: page};
+	});
 var $author$project$Navigation$pageList = _List_fromArray(
 	[
-		_Utils_Tuple2('#main', $author$project$Navigation$Main),
-		_Utils_Tuple2('#CV', $author$project$Navigation$CV),
-		_Utils_Tuple2('#misc', $author$project$Navigation$APITest)
+		_Utils_Tuple2(
+		'',
+		A2($author$project$Navigation$PageInfo, 'Home', $author$project$Navigation$Main)),
+		_Utils_Tuple2(
+		'#CV',
+		A2($author$project$Navigation$PageInfo, 'CV', $author$project$Navigation$CV)),
+		_Utils_Tuple2(
+		'#misc',
+		A2($author$project$Navigation$PageInfo, 'Misc', $author$project$Navigation$APITest))
 	]);
 var $author$project$Navigation$pageMap = $elm$core$Dict$fromList($author$project$Navigation$pageList);
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
@@ -6628,9 +6638,10 @@ var $author$project$Main$update = F2(
 					A2($elm$core$Maybe$withDefault, '', urlString),
 					$author$project$Navigation$pageMap);
 				if (route.$ === 'Just') {
-					switch (route.a.$) {
+					var pg = route.a;
+					var _v3 = pg.page;
+					switch (_v3.$) {
 						case 'Main':
-							var _v3 = route.a;
 							var _v4 = $author$project$MainPage$init(_Utils_Tuple0);
 							var m = _v4.a;
 							var c = _v4.b;
@@ -6644,10 +6655,9 @@ var $author$project$Main$update = F2(
 									}),
 								A2($elm$core$Platform$Cmd$map, $author$project$Main$MainMsg, c));
 						case 'APITest':
-							var _v5 = route.a;
-							var _v6 = $author$project$APIPage$init(_Utils_Tuple0);
-							var m = _v6.a;
-							var c = _v6.b;
+							var _v5 = $author$project$APIPage$init(_Utils_Tuple0);
+							var m = _v5.a;
+							var c = _v5.b;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -6658,14 +6668,12 @@ var $author$project$Main$update = F2(
 									}),
 								A2($elm$core$Platform$Cmd$map, $author$project$Main$APIMsg, c));
 						case 'Redshift':
-							var _v7 = route.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{currentPage: $author$project$Navigation$Redshift, url: url}),
 								$elm$core$Platform$Cmd$none);
 						default:
-							var _v8 = route.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -6673,9 +6681,9 @@ var $author$project$Main$update = F2(
 								$elm$core$Platform$Cmd$none);
 					}
 				} else {
-					var _v9 = $author$project$MainPage$init(_Utils_Tuple0);
-					var m = _v9.a;
-					var c = _v9.b;
+					var _v6 = $author$project$MainPage$init(_Utils_Tuple0);
+					var m = _v6.a;
+					var c = _v6.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6688,12 +6696,12 @@ var $author$project$Main$update = F2(
 				}
 			case 'MainMsg':
 				var b = msg.a;
-				var _v10 = model.mainModel;
-				if (_v10.$ === 'Just') {
-					var a = _v10.a;
-					var _v11 = A2($author$project$MainPage$update, b, a);
-					var m = _v11.a;
-					var c = _v11.b;
+				var _v7 = model.mainModel;
+				if (_v7.$ === 'Just') {
+					var a = _v7.a;
+					var _v8 = A2($author$project$MainPage$update, b, a);
+					var m = _v8.a;
+					var c = _v8.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6706,12 +6714,12 @@ var $author$project$Main$update = F2(
 				}
 			case 'APIMsg':
 				var b = msg.a;
-				var _v12 = model.apiModel;
-				if (_v12.$ === 'Just') {
-					var a = _v12.a;
-					var _v13 = A2($author$project$APIPage$update, b, a);
-					var m = _v13.a;
-					var c = _v13.b;
+				var _v9 = model.apiModel;
+				if (_v9.$ === 'Just') {
+					var a = _v9.a;
+					var _v10 = A2($author$project$APIPage$update, b, a);
+					var m = _v10.a;
+					var c = _v10.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -10064,13 +10072,6 @@ var $author$project$Tab$inactiveCss = $rtfeldman$elm_css$Html$Styled$Attributes$
 			A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
 			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none)
 		]));
-var $elm$core$String$replace = F3(
-	function (before, after, string) {
-		return A2(
-			$elm$core$String$join,
-			after,
-			A2($elm$core$String$split, before, string));
-	});
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
@@ -10099,7 +10100,6 @@ var $author$project$Tab$tabsWrapper = function (tabs) {
 			]),
 		tabs);
 };
-var $elm$core$String$toUpper = _String_toUpper;
 var $author$project$Navigation$viewTabs = function (page) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10110,12 +10110,11 @@ var $author$project$Navigation$viewTabs = function (page) {
 				A2(
 					$elm$core$List$map,
 					function (p) {
-						var name = A3($elm$core$String$replace, '#', '', p.a);
 						return A2(
 							$rtfeldman$elm_css$Html$Styled$a,
 							_List_fromArray(
 								[
-									_Utils_eq(p.b, page) ? $author$project$Tab$activeCss : $author$project$Tab$inactiveCss,
+									_Utils_eq(p.b.page, page) ? $author$project$Tab$activeCss : $author$project$Tab$inactiveCss,
 									$rtfeldman$elm_css$Html$Styled$Attributes$href(p.a)
 								]),
 							_List_fromArray(
@@ -10125,8 +10124,7 @@ var $author$project$Navigation$viewTabs = function (page) {
 									_List_Nil,
 									_List_fromArray(
 										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											$elm$core$String$toUpper(name))
+											$rtfeldman$elm_css$Html$Styled$text(p.b.name)
 										]))
 								]));
 					},

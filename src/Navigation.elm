@@ -29,24 +29,27 @@ viewTabs page =
     div []
         [ Tab.tabsWrapper
             ( List.map (\p ->
-                let
-                    name = (String.replace "#" "" (Tuple.first p))
-                in
                 a
-                [ if Tuple.second p == page then Tab.activeCss else Tab.inactiveCss
+                [ if (Tuple.second p).page == page then Tab.activeCss else Tab.inactiveCss
                 , href (Tuple.first p)
                 ]
-                [h3 [] [ text (String.toUpper name) ] ]
+                [h3 [] [ text (Tuple.second p).name ] ]
                 )
                 pageList
             )
         ]
 
 
-pageList: List (String, Page)
-pageList = [("#main", Main), ("#CV", CV ), ("#misc", APITest)] -- ("#redshift", Redshift),
+type alias PageInfo =
+  { name : String
+  , page : Page
+  }
 
-pageMap: Dict String Page
+
+pageList: List (String, PageInfo)
+pageList = [ ("", PageInfo "Home"  Main), ( "#CV", PageInfo "CV" CV) , ("#misc", PageInfo "Misc" APITest)] -- ("#redshift", Redshift),
+
+pageMap: Dict String PageInfo
 pageMap =
   Dict.fromList pageList
 
@@ -55,6 +58,6 @@ routeParser : Parser (Page -> a) a
 routeParser =
   oneOf
     (List.map
-        (\p -> Url.Parser.map (Tuple.second p) (Url.Parser.s (Tuple.first p)) )
+        (\p -> Url.Parser.map (Tuple.second p).page (Url.Parser.s (Tuple.first p)) )
         pageList
     )

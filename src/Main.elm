@@ -87,24 +87,26 @@ update msg model =
         -- route = Url.Parser.parse routeParser url
       in
         case route of
-          Just Main ->
-            let
-              (m, c) = MainPage.init ()
-            in
-              ({ model | url = url, mainModel = Just m, currentPage = Main }, Cmd.map MainMsg c)
+          Just pg ->
+            case pg.page of
+              Main ->
+                let
+                  (m, c) = MainPage.init ()
+                in
+                  ({ model | url = url, mainModel = Just m, currentPage = Main }, Cmd.map MainMsg c)
 
-          Just APITest ->
-            let
-              (m,c) = APIPage.init ()
-            in
-              ({ model | url = url, apiModel = Just m, currentPage = APITest }, Cmd.map APIMsg c)
+              APITest ->
+                let
+                  (m,c) = APIPage.init ()
+                in
+                  ({ model | url = url, apiModel = Just m, currentPage = APITest }, Cmd.map APIMsg c)
 
 
-          Just Redshift ->
-            ({ model | url = url, currentPage = Redshift }, Cmd.none )
+              Redshift ->
+                ({ model | url = url, currentPage = Redshift }, Cmd.none )
 
-          Just CV ->
-            ({ model | url = url, currentPage = CV }, Cmd.none )
+              CV ->
+                ({ model | url = url, currentPage = CV }, Cmd.none )
 
           _ ->
             let
