@@ -1,12 +1,13 @@
 module CVPage exposing (..)
 
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (..)
+import Html.Styled.Attributes as Att exposing (..)
 import Html.Styled.Events exposing (..)
 import Css exposing (..)
 import File.Download as Download
 import Bytes exposing (Bytes)
 import Css.Global
+import Json.Encode
 
 -- MODEL
 type alias Model =
@@ -137,9 +138,44 @@ viewAcademic =
 viewWork : Html Msg
 viewWork =
   div [ css [ displayFlex, flexDirection column, justifyContent left, margin2 (px 0) (px 30)] ]
-    [ h3 [] [ text "I am currently working as a software developer "]
+    [ h3 []
+      [ text "I am currently working as a software developer at "
+      , a [ href "https://www.smallbrooks.com/", Att.target "_blank"] [ text "Smallbrooks" ]
+      , text " making crowdfunding platforms."
+      ]
     , button [ onClick DownloadFile, css buttonStyles ] [ text "Download CV" ]
     ]
+
+
+viewHobbies : Html msg
+viewHobbies =
+  div [ css [margin2 (px 0) (px 30)] ]
+    [ h3 [] [ text "Hobbies"]
+    , h4 [] [ text "I enjoy singing in choir or on my own. Currently I am a part of the "
+            , a [ href "https://bachkoret.dk/", Att.target "_blank"] [ text "Københavns Bachkor" ]
+            , text ". Unfortunately because of Corona, I've only had one concert with them."]
+    , h4 [] [ text "Previously, I sung with Les Muses Chorale while studying at McGill University."]
+    , iframe
+      [ Att.width 560
+      , Att.height 100
+      , css [ Css.marginBottom (Css.px 30)]
+      , src "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/450199737&color=%233a3a3a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+      , Att.property "frameborder" (Json.Encode.string "0")
+      , Att.property "allowfullscreen" (Json.Encode.string "true")
+      ]
+      []
+    , h4 [] [ text "I also enjoy video making/editing"]
+    , iframe
+        [ Att.width 560
+        , Att.height 315
+        , css [ Css.marginBottom (Css.px 30)]
+        , src "https://www.youtube.com/embed/ZAe2AKLzVSw"
+        , Att.property "frameborder" (Json.Encode.string "0")
+        , Att.property "allowfullscreen" (Json.Encode.string "true")
+        ]
+        []
+    ]
+
 
 
 
@@ -154,7 +190,7 @@ view mdl =
         [ case mdl.tab of
           Academic -> viewAcademic
           Work -> viewWork
-          Hobbies -> text "Under construction"
+          Hobbies -> viewHobbies
         ]
       ]
   ]

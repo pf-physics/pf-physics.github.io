@@ -9796,7 +9796,7 @@ var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-left');
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  eective theory up to rst order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the \r\n  uid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory{La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
+var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  eective theory up to rst order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the \r\n  uid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory-La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
 var $rtfeldman$elm_css$Css$prop4 = F5(
 	function (key, argA, argB, argC, argD) {
 		return A2(
@@ -9854,6 +9854,125 @@ var $author$project$CVPage$viewAcademic = A2(
 				[
 					$rtfeldman$elm_css$Html$Styled$text($author$project$CVPage$abstract)
 				]))
+		]));
+var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
+	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
+};
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value])));
+	});
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
+var $author$project$CVPage$viewHobbies = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Hobbies')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('I enjoy singing in choir or on my own. Currently I am a part of the '),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://bachkoret.dk/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Københavns Bachkor')
+						])),
+					$rtfeldman$elm_css$Html$Styled$text('. Unfortunately because of Corona, I\'ve only had one concert with them.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Previously, I sung with Les Muses Chorale while studying at McGill University.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$iframe,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$width(560),
+					$rtfeldman$elm_css$Html$Styled$Attributes$height(100),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$marginBottom(
+							$rtfeldman$elm_css$Css$px(30))
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$src('https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/450199737&color=%233a3a3a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'frameborder',
+					$elm$json$Json$Encode$string('0')),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'allowfullscreen',
+					$elm$json$Json$Encode$string('true'))
+				]),
+			_List_Nil),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('I also enjoy video making/editing')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$iframe,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$width(560),
+					$rtfeldman$elm_css$Html$Styled$Attributes$height(315),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$marginBottom(
+							$rtfeldman$elm_css$Css$px(30))
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$src('https://www.youtube.com/embed/ZAe2AKLzVSw'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'frameborder',
+					$elm$json$Json$Encode$string('0')),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'allowfullscreen',
+					$elm$json$Json$Encode$string('true'))
+				]),
+			_List_Nil)
 		]));
 var $author$project$CVPage$Hobbies = {$: 'Hobbies'};
 var $author$project$CVPage$SwitchTab = function (a) {
@@ -10000,17 +10119,6 @@ var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
 var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
 var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
 var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
-var $rtfeldman$elm_css$Css$prop2 = F3(
-	function (key, argA, argB) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value])));
-	});
 var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $author$project$CVPage$buttonStyles = _List_fromArray(
@@ -10048,7 +10156,6 @@ var $author$project$CVPage$buttonStyles = _List_fromArray(
 				$rtfeldman$elm_css$Css$px(10))
 			]))
 	]);
-var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
 var $author$project$CVPage$viewWork = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -10072,7 +10179,19 @@ var $author$project$CVPage$viewWork = A2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text('I am currently working as a software developer ')
+					$rtfeldman$elm_css$Html$Styled$text('I am currently working as a software developer at '),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://www.smallbrooks.com/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
+						])),
+					$rtfeldman$elm_css$Html$Styled$text(' making crowdfunding platforms.')
 				])),
 			A2(
 			$rtfeldman$elm_css$Html$Styled$button,
@@ -10162,7 +10281,7 @@ var $author$project$CVPage$view = function (mdl) {
 									case 'Work':
 										return $author$project$CVPage$viewWork;
 									default:
-										return $rtfeldman$elm_css$Html$Styled$text('Under construction');
+										return $author$project$CVPage$viewHobbies;
 								}
 							}()
 							]))
@@ -10276,7 +10395,6 @@ var $author$project$MainPage$view = function (model) {
 					]))
 			]));
 };
-var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
 var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
 var $rtfeldman$elm_css$Css$textDecoration = $rtfeldman$elm_css$Css$prop1('text-decoration');
 var $author$project$Tab$activeCss = $rtfeldman$elm_css$Html$Styled$Attributes$css(
@@ -10293,9 +10411,6 @@ var $author$project$Tab$activeCss = $rtfeldman$elm_css$Html$Styled$Attributes$cs
 			$rtfeldman$elm_css$Css$padding(
 			$rtfeldman$elm_css$Css$px(10))
 		]));
-var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
-	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
-};
 var $author$project$Tab$inactiveCss = $rtfeldman$elm_css$Html$Styled$Attributes$css(
 	_List_fromArray(
 		[
