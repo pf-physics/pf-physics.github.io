@@ -47,7 +47,7 @@ type alias PageInfo =
 
 
 pageList: List (String, PageInfo)
-pageList = [ ("", PageInfo "Home"  Main), ( "#CV", PageInfo "Experience" CV) , ("#misc", PageInfo "Misc" APITest)] -- ("#redshift", Redshift),
+pageList = [ ("", PageInfo "Home"  Main), ( "#Experience", PageInfo "Experience" CV) , ("#misc", PageInfo "Misc" APITest)] -- ("#redshift", Redshift),
 
 pageMap: Dict String PageInfo
 pageMap =

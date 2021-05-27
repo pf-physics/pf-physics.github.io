@@ -82,8 +82,8 @@ type Tab
 -- VIEW
 
 
-viewTabs : Html Msg
-viewTabs =
+viewTabs : Model -> Html Msg
+viewTabs mdl =
   let
     tabStyles =
       css
@@ -93,6 +93,8 @@ viewTabs =
         , Css.property "color" "white"
         , cursor pointer
         ]
+    chosenTab tab =
+      css (if mdl.tab == tab then [ border3 (px 2) solid (hex "757575"), borderRadius (px 20) ] else [])
   in
   div 
     [ css
@@ -105,9 +107,9 @@ viewTabs =
       , Css.height (pct 100)
       ]
     ]
-    [ div [ onClick (SwitchTab Academic), tabStyles] [ text "Academic"]
-    , div [ onClick (SwitchTab Work), tabStyles] [ text "Work"]
-    , div [ onClick (SwitchTab Hobbies), tabStyles] [ text "Hobbies"]
+    [ div [ onClick (SwitchTab Academic), tabStyles, chosenTab Academic] [ text "Academic"]
+    , div [ onClick (SwitchTab Work), tabStyles, chosenTab Work] [ text "Work"]
+    , div [ onClick (SwitchTab Hobbies), tabStyles, chosenTab Hobbies] [ text "Hobbies"]
     ]
 
 
@@ -116,10 +118,9 @@ abstract = """Black holes in dimensions > 4 can take on new properties and topol
   a rotating black hole in D > 4 dimensions and take it to the ultra-spinning
   limit. In this limit, where the horizon exhibits two widely separated length scales,
   we explicitly show that Myers-Perry black holes are described by the blackfold
-  eective theory up to rst order in a derivative expansion. We conjecture that
+  effective theory up to first order in a derivative expansion. We conjecture that
   the second order blackfold approximation of Myers-Perry black holes can be
-  obtained by applying the 
-  uid/gravity correspondence. Using results obtained
+  obtained by applying the fluid/gravity correspondence. Using results obtained
   in this manner, we examine the expected higher order metrics and associated
   energy-momentum tensors. We review the comparison of the Gregory-La
   amme
@@ -141,7 +142,12 @@ viewWork =
     [ h3 []
       [ text "I am currently working as a software developer at "
       , a [ href "https://www.smallbrooks.com/", Att.target "_blank"] [ text "Smallbrooks" ]
-      , text " making crowdfunding platforms."
+      , text " working on crowdfunding platforms."
+      , p [] 
+        [ text "An example of one of the platforms we've made is "
+        , a [ href "https://crowdfunding.coop.dk/", Att.target "_blank" ] [ text "Coop Crowdfunding"]
+        , text " which provides a great way of getting new products on the market, allowing for the general crowd to support farms and businesses."
+        ]
       ]
     , button [ onClick DownloadFile, css buttonStyles ] [ text "Download CV" ]
     ]
@@ -185,7 +191,7 @@ view mdl =
   [ h1 [css [displayFlex, justifyContent center] ] [ text "Experience" ]
     , h4 [css [displayFlex, justifyContent center]] [text "Note - these pages are still under construction"]
     , div [ css [ displayFlex, padding (px 10) ] ]
-      [ viewTabs
+      [ viewTabs mdl
       , div [ css [ displayFlex, paddingLeft (px 50), justifyContent left, Css.width (pct 100)] ] 
         [ case mdl.tab of
           Academic -> viewAcademic

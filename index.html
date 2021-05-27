@@ -6471,7 +6471,7 @@ var $author$project$Navigation$pageList = _List_fromArray(
 		'',
 		A2($author$project$Navigation$PageInfo, 'Home', $author$project$Navigation$Main)),
 		_Utils_Tuple2(
-		'#CV',
+		'#Experience',
 		A2($author$project$Navigation$PageInfo, 'Experience', $author$project$Navigation$CV)),
 		_Utils_Tuple2(
 		'#misc',
@@ -9796,7 +9796,7 @@ var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-left');
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  eective theory up to rst order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the \r\n  uid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory-La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
+var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  effective theory up to first order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the fluid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory-La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
 var $rtfeldman$elm_css$Css$prop4 = F5(
 	function (key, argA, argB, argC, argD) {
 		return A2(
@@ -9980,6 +9980,18 @@ var $author$project$CVPage$SwitchTab = function (a) {
 };
 var $author$project$CVPage$Work = {$: 'Work'};
 var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
+var $rtfeldman$elm_css$Css$prop3 = F4(
+	function (key, argA, argB, argC) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value])));
+	});
+var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
 var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
 var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
 var $rtfeldman$elm_css$Css$column = _Utils_update(
@@ -10018,8 +10030,9 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		$elm$json$Json$Decode$succeed(msg));
 };
 var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $author$project$CVPage$viewTabs = function () {
+var $author$project$CVPage$viewTabs = function (mdl) {
 	var tabStyles = $rtfeldman$elm_css$Html$Styled$Attributes$css(
 		_List_fromArray(
 			[
@@ -10030,6 +10043,19 @@ var $author$project$CVPage$viewTabs = function () {
 				A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
 				$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer)
 			]));
+	var chosenTab = function (tab) {
+		return $rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_Utils_eq(mdl.tab, tab) ? _List_fromArray(
+				[
+					A3(
+					$rtfeldman$elm_css$Css$border3,
+					$rtfeldman$elm_css$Css$px(2),
+					$rtfeldman$elm_css$Css$solid,
+					$rtfeldman$elm_css$Css$hex('757575')),
+					$rtfeldman$elm_css$Css$borderRadius(
+					$rtfeldman$elm_css$Css$px(20))
+				]) : _List_Nil);
+	};
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
 		_List_fromArray(
@@ -10058,7 +10084,8 @@ var $author$project$CVPage$viewTabs = function () {
 					[
 						$rtfeldman$elm_css$Html$Styled$Events$onClick(
 						$author$project$CVPage$SwitchTab($author$project$CVPage$Academic)),
-						tabStyles
+						tabStyles,
+						chosenTab($author$project$CVPage$Academic)
 					]),
 				_List_fromArray(
 					[
@@ -10070,7 +10097,8 @@ var $author$project$CVPage$viewTabs = function () {
 					[
 						$rtfeldman$elm_css$Html$Styled$Events$onClick(
 						$author$project$CVPage$SwitchTab($author$project$CVPage$Work)),
-						tabStyles
+						tabStyles,
+						chosenTab($author$project$CVPage$Work)
 					]),
 				_List_fromArray(
 					[
@@ -10082,28 +10110,17 @@ var $author$project$CVPage$viewTabs = function () {
 					[
 						$rtfeldman$elm_css$Html$Styled$Events$onClick(
 						$author$project$CVPage$SwitchTab($author$project$CVPage$Hobbies)),
-						tabStyles
+						tabStyles,
+						chosenTab($author$project$CVPage$Hobbies)
 					]),
 				_List_fromArray(
 					[
 						$rtfeldman$elm_css$Html$Styled$text('Hobbies')
 					]))
 			]));
-}();
+};
 var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $rtfeldman$elm_css$Css$prop3 = F4(
-	function (key, argA, argB, argC) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value, argC.value])));
-	});
-var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
 var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
 var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
 	function (a, b) {
@@ -10120,7 +10137,6 @@ var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
 var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
 var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
 var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
-var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $author$project$CVPage$buttonStyles = _List_fromArray(
 	[
 		A2(
@@ -10191,7 +10207,26 @@ var $author$project$CVPage$viewWork = A2(
 						[
 							$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
 						])),
-					$rtfeldman$elm_css$Html$Styled$text(' making crowdfunding platforms.')
+					$rtfeldman$elm_css$Html$Styled$text(' working on crowdfunding platforms.'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('An example of one of the platforms we\'ve made is '),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$a,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$href('https://crowdfunding.coop.dk/'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Coop Crowdfunding')
+								])),
+							$rtfeldman$elm_css$Html$Styled$text(' which provides a great way of getting new products on the market, allowing for the general crowd to support farms and businesses.')
+						]))
 				])),
 			A2(
 			$rtfeldman$elm_css$Html$Styled$button,
@@ -10255,7 +10290,7 @@ var $author$project$CVPage$view = function (mdl) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$CVPage$viewTabs,
+						$author$project$CVPage$viewTabs(mdl),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
@@ -10357,7 +10392,9 @@ var $author$project$MainPage$view = function (model) {
 										_List_fromArray(
 											[
 												$rtfeldman$elm_css$Css$height(
-												$rtfeldman$elm_css$Css$px(300))
+												$rtfeldman$elm_css$Css$px(300)),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(10))
 											]))
 									]),
 								_List_Nil)
@@ -10434,6 +10471,18 @@ var $rtfeldman$elm_css$Css$alignItems = function (fn) {
 		'align-items',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
+var $rtfeldman$elm_css$Css$prop5 = F6(
+	function (key, argA, argB, argC, argD, argE) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value, argD.value, argE.value])));
+	});
+var $rtfeldman$elm_css$Css$boxShadow5 = $rtfeldman$elm_css$Css$prop5('box-shadow');
 var $author$project$Tab$tabsWrapper = function (tabs) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10446,7 +10495,14 @@ var $author$project$Tab$tabsWrapper = function (tabs) {
 						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
 						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
 						$rtfeldman$elm_css$Css$backgroundColor(
-						$rtfeldman$elm_css$Css$hex('#424242'))
+						$rtfeldman$elm_css$Css$hex('#424242')),
+						A5(
+						$rtfeldman$elm_css$Css$boxShadow5,
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$px(5),
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$hex('#777'))
 					]))
 			]),
 		tabs);

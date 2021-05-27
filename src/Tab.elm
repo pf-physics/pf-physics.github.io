@@ -43,6 +43,7 @@ tabsWrapper tabs =
             , justifyContent left
             --, border3 (px 3) solid (hex "efefef")
             , backgroundColor (hex "#424242")
+            , boxShadow5 (px 0) (px 0) (px 5) (px 0) (hex "#777")
             ]
         ]
         tabs
