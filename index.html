@@ -6586,12 +6586,15 @@ var $elm$file$File$Download$url = function (href) {
 		_File_downloadUrl(href));
 };
 var $author$project$CVPage$downloadCV = $elm$file$File$Download$url('Files/CV.pdf');
+var $author$project$CVPage$downloadThesis = $elm$file$File$Download$url('Files/thesis.pdf');
 var $author$project$CVPage$saveFrog = $elm$file$File$Download$url('Files/frog.jpg');
 var $author$project$CVPage$update = F2(
 	function (msg, mdl) {
 		switch (msg.$) {
 			case 'DownloadFile':
 				return _Utils_Tuple2(mdl, $author$project$CVPage$downloadCV);
+			case 'DownloadThesis':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$downloadThesis);
 			case 'DownloadFrog':
 				return _Utils_Tuple2(mdl, $author$project$CVPage$saveFrog);
 			default:
@@ -9796,7 +9799,93 @@ var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-left');
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
+var $author$project$CVPage$DownloadThesis = {$: 'DownloadThesis'};
 var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  effective theory up to first order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the fluid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory-La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
+var $rtfeldman$elm_css$Html$Styled$br = $rtfeldman$elm_css$Html$Styled$node('br');
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
+var $rtfeldman$elm_css$Css$prop3 = F4(
+	function (key, argA, argB, argC) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value])));
+	});
+var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
+var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
+var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
+	var value = _v0.value;
+	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
+};
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value])));
+	});
+var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
+var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $author$project$CVPage$buttonStyles = _List_fromArray(
+	[
+		A2(
+		$rtfeldman$elm_css$Css$padding2,
+		$rtfeldman$elm_css$Css$px(10),
+		$rtfeldman$elm_css$Css$px(25)),
+		$rtfeldman$elm_css$Css$fontSize(
+		$rtfeldman$elm_css$Css$px(20)),
+		$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
+		$rtfeldman$elm_css$Css$color(
+		$rtfeldman$elm_css$Css$hex('#ffffff')),
+		$rtfeldman$elm_css$Css$backgroundColor(
+		$rtfeldman$elm_css$Css$hex('#530082')),
+		$rtfeldman$elm_css$Css$borderRadius(
+		$rtfeldman$elm_css$Css$px(6)),
+		A3(
+		$rtfeldman$elm_css$Css$border3,
+		$rtfeldman$elm_css$Css$px(1),
+		$rtfeldman$elm_css$Css$solid,
+		$rtfeldman$elm_css$Css$hex('#3f0e48')),
+		A2($rtfeldman$elm_css$Css$property, 'font-family', 'calibri'),
+		$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
+		$rtfeldman$elm_css$Css$maxHeight(
+		$rtfeldman$elm_css$Css$px(60)),
+		$rtfeldman$elm_css$Css$maxWidth(
+		$rtfeldman$elm_css$Css$px(200)),
+		$rtfeldman$elm_css$Css$hover(
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$backgroundColor(
+				$rtfeldman$elm_css$Css$hex('#380057')),
+				$rtfeldman$elm_css$Css$borderRadius(
+				$rtfeldman$elm_css$Css$px(10))
+			]))
+	]);
 var $rtfeldman$elm_css$Css$prop4 = F5(
 	function (key, argA, argB, argC, argD) {
 		return A2(
@@ -9809,6 +9898,31 @@ var $rtfeldman$elm_css$Css$prop4 = F5(
 					[argA.value, argB.value, argC.value, argD.value])));
 	});
 var $rtfeldman$elm_css$Css$margin4 = $rtfeldman$elm_css$Css$prop4('margin');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
+	function (eventName, handler) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $author$project$CVPage$viewAcademic = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -9853,23 +9967,24 @@ var $author$project$CVPage$viewAcademic = A2(
 			_List_fromArray(
 				[
 					$rtfeldman$elm_css$Html$Styled$text($author$project$CVPage$abstract)
+				])),
+			A2($rtfeldman$elm_css$Html$Styled$br, _List_Nil, _List_Nil),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$button,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadThesis),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Download Thesis')
 				]))
 		]));
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
-var $rtfeldman$elm_css$Css$prop2 = F3(
-	function (key, argA, argB) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value])));
-	});
 var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
 var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
 var $author$project$CVPage$viewHobbies = A2(
@@ -9979,58 +10094,12 @@ var $author$project$CVPage$SwitchTab = function (a) {
 	return {$: 'SwitchTab', a: a};
 };
 var $author$project$CVPage$Work = {$: 'Work'};
-var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
-var $rtfeldman$elm_css$Css$prop3 = F4(
-	function (key, argA, argB, argC) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value, argC.value])));
-	});
-var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
-var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
 var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
 var $rtfeldman$elm_css$Css$column = _Utils_update(
 	$rtfeldman$elm_css$Css$row,
 	{value: 'column'});
-var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
 var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
-var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
-	var value = _v0.value;
-	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
-};
 var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
-	function (eventName, handler) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
-			_List_Nil,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
-var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$CVPage$viewTabs = function (mdl) {
 	var tabStyles = $rtfeldman$elm_css$Html$Styled$Attributes$css(
@@ -10120,58 +10189,6 @@ var $author$project$CVPage$viewTabs = function (mdl) {
 			]));
 };
 var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 'ExtendSelector', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 'PseudoClassSelector', a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
-var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
-var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
-var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
-var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
-var $author$project$CVPage$buttonStyles = _List_fromArray(
-	[
-		A2(
-		$rtfeldman$elm_css$Css$padding2,
-		$rtfeldman$elm_css$Css$px(10),
-		$rtfeldman$elm_css$Css$px(25)),
-		$rtfeldman$elm_css$Css$fontSize(
-		$rtfeldman$elm_css$Css$px(20)),
-		$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
-		$rtfeldman$elm_css$Css$color(
-		$rtfeldman$elm_css$Css$hex('#ffffff')),
-		$rtfeldman$elm_css$Css$backgroundColor(
-		$rtfeldman$elm_css$Css$hex('#530082')),
-		$rtfeldman$elm_css$Css$borderRadius(
-		$rtfeldman$elm_css$Css$px(6)),
-		A3(
-		$rtfeldman$elm_css$Css$border3,
-		$rtfeldman$elm_css$Css$px(1),
-		$rtfeldman$elm_css$Css$solid,
-		$rtfeldman$elm_css$Css$hex('#3f0e48')),
-		A2($rtfeldman$elm_css$Css$property, 'font-family', 'calibri'),
-		$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
-		$rtfeldman$elm_css$Css$maxHeight(
-		$rtfeldman$elm_css$Css$px(60)),
-		$rtfeldman$elm_css$Css$maxWidth(
-		$rtfeldman$elm_css$Css$px(200)),
-		$rtfeldman$elm_css$Css$hover(
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Css$backgroundColor(
-				$rtfeldman$elm_css$Css$hex('#380057')),
-				$rtfeldman$elm_css$Css$borderRadius(
-				$rtfeldman$elm_css$Css$px(10))
-			]))
-	]);
 var $author$project$CVPage$viewWork = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -10195,7 +10212,7 @@ var $author$project$CVPage$viewWork = A2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text('I am currently working as a software developer at '),
+					$rtfeldman$elm_css$Html$Styled$text('My most recent position was at '),
 					A2(
 					$rtfeldman$elm_css$Html$Styled$a,
 					_List_fromArray(
@@ -10207,7 +10224,7 @@ var $author$project$CVPage$viewWork = A2(
 						[
 							$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
 						])),
-					$rtfeldman$elm_css$Html$Styled$text(' working on crowdfunding platforms.'),
+					$rtfeldman$elm_css$Html$Styled$text(' where I was employed as a software developer, working on crowdfunding platforms.'),
 					A2(
 					$rtfeldman$elm_css$Html$Styled$p,
 					_List_Nil,
@@ -10225,7 +10242,7 @@ var $author$project$CVPage$viewWork = A2(
 								[
 									$rtfeldman$elm_css$Html$Styled$text('Coop Crowdfunding')
 								])),
-							$rtfeldman$elm_css$Html$Styled$text(' which provides a great way of getting new products on the market, allowing for the general crowd to support farms and businesses.')
+							$rtfeldman$elm_css$Html$Styled$text(' which provides a great way of getting new products on the market, allowing for the general crowd to support farms and small businesses.')
 						]))
 				])),
 			A2(

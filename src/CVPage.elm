@@ -29,6 +29,11 @@ downloadCV =
   Download.url "Files/CV.pdf"
 
 
+downloadThesis : Cmd msg
+downloadThesis =
+  Download.url "Files/thesis.pdf"
+
+
 saveFrog : Cmd msg
 saveFrog =
   Download.url "Files/frog.jpg"
@@ -39,6 +44,7 @@ type Msg
   = DownloadFrog
   | DownloadFile
   | SwitchTab Tab
+  | DownloadThesis
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -46,6 +52,9 @@ update msg mdl =
   case msg of
     DownloadFile ->
       (mdl, downloadCV)
+
+    DownloadThesis ->
+      (mdl, downloadThesis)
 
     DownloadFrog ->
       (mdl, saveFrog)
@@ -133,6 +142,8 @@ viewAcademic =
   , h2 [] [ text "Master's thesis:"]
   , h3 [] [ text "Abstract" ]
   , p [] [ text abstract]
+  , br [] []
+  , button [ onClick DownloadThesis, css buttonStyles ] [ text "Download Thesis" ]
   ]
 
 
@@ -140,13 +151,13 @@ viewWork : Html Msg
 viewWork =
   div [ css [ displayFlex, flexDirection column, justifyContent left, margin2 (px 0) (px 30)] ]
     [ h3 []
-      [ text "I am currently working as a software developer at "
+      [ text "My most recent position was at "
       , a [ href "https://www.smallbrooks.com/", Att.target "_blank"] [ text "Smallbrooks" ]
-      , text " working on crowdfunding platforms."
-      , p [] 
+      , text " where I was employed as a software developer, working on crowdfunding platforms."
+      , p []
         [ text "An example of one of the platforms we've made is "
         , a [ href "https://crowdfunding.coop.dk/", Att.target "_blank" ] [ text "Coop Crowdfunding"]
-        , text " which provides a great way of getting new products on the market, allowing for the general crowd to support farms and businesses."
+        , text " which provides a great way of getting new products on the market, allowing for the general crowd to support farms and small businesses."
         ]
       ]
     , button [ onClick DownloadFile, css buttonStyles ] [ text "Download CV" ]
