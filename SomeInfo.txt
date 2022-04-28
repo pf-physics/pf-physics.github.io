@@ -8,11 +8,12 @@ elm-live src/Main.elm --pushstate
 elm make src/Main.elm --output=main.js
 To embed in file
 
+I might actually have to do (without output?):
+elm make src/Main.elm
+
 On github will have to parse urls using #
 Oh well
 
-Now file upload
-Make it look nicer... I gues... hmmm
 
 
 lmao
