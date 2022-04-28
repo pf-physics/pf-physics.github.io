@@ -168,9 +168,9 @@ viewHobbies : Html msg
 viewHobbies =
   div [ css [margin2 (px 0) (px 30)] ]
     [ h3 [] [ text "Hobbies"]
-    , h4 [] [ text "I enjoy singing in choir or on my own. Currently I am a part of the "
+    , h4 [] [ text "I enjoy singing in choir or on my own. Most recently I was a part of the "
             , a [ href "https://bachkoret.dk/", Att.target "_blank"] [ text "Københavns Bachkor" ]
-            , text ". Unfortunately because of Corona, I've only had one concert with them."]
+            , text ". Because of Corona, I had fewer concerts with them than planned but enjoyed performing the Bach Christmas Oratorio with them in 2019 and 2021."]
     , h4 [] [ text "Previously, I sung with Les Muses Chorale while studying at McGill University."]
     , iframe
       [ Att.width 560

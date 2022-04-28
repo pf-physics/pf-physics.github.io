@@ -45,7 +45,7 @@ view model =
     [ div [css [ displayFlex, justifyContent center, Css.width (pct 100)] ]  [ img [ src "Files/SPF.png", css [Css.height (px 300), borderRadius (px 10)]] [] ]
     , p [ css [ fontSize (px 20), Css.width (pct 200)] ]
       [ p [] [text "I am a physicist and software developer interested in cosmology and gravity."]
-      , p [] [text "I am currently searching for a PhD in physics"]
+      , p [] [text "I am currently searching for employment in physics or software development."]
       ]
     ]
   ]

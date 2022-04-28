@@ -4532,22 +4532,183 @@ function _Http_track(router, xhr, tracker)
 	});
 }
 
-function _Url_percentEncode(string)
+
+// DECODER
+
+var _File_decoder = _Json_decodePrim(function(value) {
+	// NOTE: checks if `File` exists in case this is run on node
+	return (typeof File !== 'undefined' && value instanceof File)
+		? $elm$core$Result$Ok(value)
+		: _Json_expecting('a FILE', value);
+});
+
+
+// METADATA
+
+function _File_name(file) { return file.name; }
+function _File_mime(file) { return file.type; }
+function _File_size(file) { return file.size; }
+
+function _File_lastModified(file)
 {
-	return encodeURIComponent(string);
+	return $elm$time$Time$millisToPosix(file.lastModified);
 }
 
-function _Url_percentDecode(string)
+
+// DOWNLOAD
+
+var _File_downloadNode;
+
+function _File_getDownloadNode()
 {
-	try
+	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
+}
+
+var _File_download = F3(function(name, mime, content)
+{
+	return _Scheduler_binding(function(callback)
 	{
-		return $elm$core$Maybe$Just(decodeURIComponent(string));
+		var blob = new Blob([content], {type: mime});
+
+		// for IE10+
+		if (navigator.msSaveOrOpenBlob)
+		{
+			navigator.msSaveOrOpenBlob(blob, name);
+			return;
+		}
+
+		// for HTML5
+		var node = _File_getDownloadNode();
+		var objectUrl = URL.createObjectURL(blob);
+		node.href = objectUrl;
+		node.download = name;
+		_File_click(node);
+		URL.revokeObjectURL(objectUrl);
+	});
+});
+
+function _File_downloadUrl(href)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var node = _File_getDownloadNode();
+		node.href = href;
+		node.download = '';
+		node.origin === location.origin || (node.target = '_blank');
+		_File_click(node);
+	});
+}
+
+
+// IE COMPATIBILITY
+
+function _File_makeBytesSafeForInternetExplorer(bytes)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
+	// all other browsers can just run `new Blob([bytes])` directly with no problem
+	//
+	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+}
+
+function _File_click(node)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
+	// all other browsers have MouseEvent and do not need this conditional stuff
+	//
+	if (typeof MouseEvent === 'function')
+	{
+		node.dispatchEvent(new MouseEvent('click'));
 	}
-	catch (e)
+	else
 	{
-		return $elm$core$Maybe$Nothing;
+		var event = document.createEvent('MouseEvents');
+		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		document.body.appendChild(node);
+		node.dispatchEvent(event);
+		document.body.removeChild(node);
 	}
 }
+
+
+// UPLOAD
+
+var _File_node;
+
+function _File_uploadOne(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			callback(_Scheduler_succeed(event.target.files[0]));
+		});
+		_File_click(_File_node);
+	});
+}
+
+function _File_uploadOneOrMore(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.multiple = true;
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			var elmFiles = _List_fromArray(event.target.files);
+			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
+		});
+		_File_click(_File_node);
+	});
+}
+
+
+// CONTENT
+
+function _File_toString(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsText(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toBytes(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(new DataView(reader.result)));
+		});
+		reader.readAsArrayBuffer(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toUrl(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsDataURL(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+
 
 
 var _Bitwise_and = F2(function(a, b)
@@ -5380,51 +5541,22 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Navigation$Main = {$: 'Main'};
-var $author$project$Main$Model = F6(
-	function (key, url, mainModel, apiModel, message, currentPage) {
-		return {apiModel: apiModel, currentPage: currentPage, key: key, mainModel: mainModel, message: message, url: url};
+var $author$project$Main$Model = F7(
+	function (key, url, mainModel, apiModel, cvModel, message, currentPage) {
+		return {apiModel: apiModel, currentPage: currentPage, cvModel: cvModel, key: key, mainModel: mainModel, message: message, url: url};
 	});
 var $author$project$Main$APIMsg = function (a) {
 	return {$: 'APIMsg', a: a};
 };
 var $author$project$Navigation$APITest = {$: 'APITest'};
+var $author$project$Navigation$CV = {$: 'CV'};
+var $author$project$Main$CVMsg = function (a) {
+	return {$: 'CVMsg', a: a};
+};
 var $author$project$Main$MainMsg = function (a) {
 	return {$: 'MainMsg', a: a};
 };
-var $author$project$APIPage$GotImage = function (a) {
-	return {$: 'GotImage', a: a};
-};
-var $author$project$APIPage$Loading = {$: 'Loading'};
-var $elm$json$Json$Decode$decodeString = _Json_runOnString;
-var $elm$http$Http$BadStatus_ = F2(
-	function (a, b) {
-		return {$: 'BadStatus_', a: a, b: b};
-	});
-var $elm$http$Http$BadUrl_ = function (a) {
-	return {$: 'BadUrl_', a: a};
-};
-var $elm$http$Http$GoodStatus_ = F2(
-	function (a, b) {
-		return {$: 'GoodStatus_', a: a, b: b};
-	});
-var $elm$http$Http$NetworkError_ = {$: 'NetworkError_'};
-var $elm$http$Http$Receiving = function (a) {
-	return {$: 'Receiving', a: a};
-};
-var $elm$http$Http$Sending = function (a) {
-	return {$: 'Sending', a: a};
-};
-var $elm$http$Http$Timeout_ = {$: 'Timeout_'};
-var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
-var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $elm$core$Maybe$isJust = function (maybe) {
-	if (maybe.$ === 'Just') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $author$project$Navigation$Redshift = {$: 'Redshift'};
 var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$get = F2(
 	function (targetKey, dict) {
@@ -5457,6 +5589,57 @@ var $elm$core$Dict$get = F2(
 			}
 		}
 	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$APIPage$GotImage = function (a) {
+	return {$: 'GotImage', a: a};
+};
+var $author$project$APIPage$GotJoke = function (a) {
+	return {$: 'GotJoke', a: a};
+};
+var $author$project$APIPage$Loading = {$: 'Loading'};
+var $author$project$APIPage$Model = F2(
+	function (nasaImage, randomJoke) {
+		return {nasaImage: nasaImage, randomJoke: randomJoke};
+	});
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
+var $elm$http$Http$BadStatus_ = F2(
+	function (a, b) {
+		return {$: 'BadStatus_', a: a, b: b};
+	});
+var $elm$http$Http$BadUrl_ = function (a) {
+	return {$: 'BadUrl_', a: a};
+};
+var $elm$http$Http$GoodStatus_ = F2(
+	function (a, b) {
+		return {$: 'GoodStatus_', a: a, b: b};
+	});
+var $elm$http$Http$NetworkError_ = {$: 'NetworkError_'};
+var $elm$http$Http$Receiving = function (a) {
+	return {$: 'Receiving', a: a};
+};
+var $elm$http$Http$Sending = function (a) {
+	return {$: 'Sending', a: a};
+};
+var $elm$http$Http$Timeout_ = {$: 'Timeout_'};
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $elm$core$Maybe$isJust = function (maybe) {
+	if (maybe.$ === 'Just') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$core$Dict$Black = {$: 'Black'};
 var $elm$core$Dict$RBNode_elm_builtin = F5(
 	function (a, b, c, d, e) {
@@ -6182,263 +6365,106 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$APIPage$NasaImage = F2(
+	function (url, mediaType) {
+		return {mediaType: mediaType, url: url};
+	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$APIPage$imageDecoder = A2($elm$json$Json$Decode$field, 'url', $elm$json$Json$Decode$string);
+var $author$project$APIPage$imageDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$APIPage$NasaImage,
+	A2($elm$json$Json$Decode$field, 'url', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'media_type', $elm$json$Json$Decode$string));
+var $author$project$APIPage$Joke = F2(
+	function (setup, delivery) {
+		return {delivery: delivery, setup: setup};
+	});
+var $author$project$APIPage$randomJokeDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$APIPage$Joke,
+	A2($elm$json$Json$Decode$field, 'setup', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'delivery', $elm$json$Json$Decode$string));
 var $author$project$APIPage$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$APIPage$Loading,
-		$elm$http$Http$get(
-			{
-				expect: A2($elm$http$Http$expectJson, $author$project$APIPage$GotImage, $author$project$APIPage$imageDecoder),
-				url: 'https://api.nasa.gov/planetary/apod?api_key=E5I1roOsvZvSKbJFALNAnoHqD12FNcmL8uoARAd3'
-			}));
+		A2($author$project$APIPage$Model, $author$project$APIPage$Loading, $author$project$APIPage$Loading),
+		$elm$core$Platform$Cmd$batch(
+			_List_fromArray(
+				[
+					$elm$http$Http$get(
+					{
+						expect: A2($elm$http$Http$expectJson, $author$project$APIPage$GotImage, $author$project$APIPage$imageDecoder),
+						url: 'https://api.nasa.gov/planetary/apod?api_key=E5I1roOsvZvSKbJFALNAnoHqD12FNcmL8uoARAd3'
+					}),
+					$elm$http$Http$get(
+					{
+						expect: A2($elm$http$Http$expectJson, $author$project$APIPage$GotJoke, $author$project$APIPage$randomJokeDecoder),
+						url: 'https://v2.jokeapi.dev/joke/Spooky?type=twopart?blacklistFlags=nsfw,racist,sexist,explicit'
+					})
+				])));
+};
+var $author$project$CVPage$Academic = {$: 'Academic'};
+var $author$project$CVPage$Model = F3(
+	function (test, message, tab) {
+		return {message: message, tab: tab, test: test};
+	});
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$CVPage$init = function (_v0) {
+	return _Utils_Tuple2(
+		A3($author$project$CVPage$Model, 'Starting it up', $elm$core$Maybe$Nothing, $author$project$CVPage$Academic),
+		$elm$core$Platform$Cmd$none);
 };
 var $author$project$MainPage$Model = F2(
 	function (test, message) {
 		return {message: message, test: test};
 	});
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$MainPage$init = function (_v0) {
 	return _Utils_Tuple2(
 		A2($author$project$MainPage$Model, 'Starting it up', $elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$core$Platform$Cmd$map = _Platform_map;
-var $elm$url$Url$Parser$State = F5(
-	function (visited, unvisited, params, frag, value) {
-		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
-	});
-var $elm$url$Url$Parser$getFirstMatch = function (states) {
-	getFirstMatch:
-	while (true) {
-		if (!states.b) {
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
 			return $elm$core$Maybe$Nothing;
-		} else {
-			var state = states.a;
-			var rest = states.b;
-			var _v1 = state.unvisited;
-			if (!_v1.b) {
-				return $elm$core$Maybe$Just(state.value);
-			} else {
-				if ((_v1.a === '') && (!_v1.b.b)) {
-					return $elm$core$Maybe$Just(state.value);
-				} else {
-					var $temp$states = rest;
-					states = $temp$states;
-					continue getFirstMatch;
-				}
-			}
-		}
-	}
-};
-var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
-	if (!segments.b) {
-		return _List_Nil;
-	} else {
-		if ((segments.a === '') && (!segments.b.b)) {
-			return _List_Nil;
-		} else {
-			var segment = segments.a;
-			var rest = segments.b;
-			return A2(
-				$elm$core$List$cons,
-				segment,
-				$elm$url$Url$Parser$removeFinalEmpty(rest));
-		}
-	}
-};
-var $elm$url$Url$Parser$preparePath = function (path) {
-	var _v0 = A2($elm$core$String$split, '/', path);
-	if (_v0.b && (_v0.a === '')) {
-		var segments = _v0.b;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	} else {
-		var segments = _v0;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	}
-};
-var $elm$url$Url$Parser$addToParametersHelp = F2(
-	function (value, maybeList) {
-		if (maybeList.$ === 'Nothing') {
-			return $elm$core$Maybe$Just(
-				_List_fromArray(
-					[value]));
-		} else {
-			var list = maybeList.a;
-			return $elm$core$Maybe$Just(
-				A2($elm$core$List$cons, value, list));
 		}
 	});
-var $elm$url$Url$percentDecode = _Url_percentDecode;
-var $elm$url$Url$Parser$addParam = F2(
-	function (segment, dict) {
-		var _v0 = A2($elm$core$String$split, '=', segment);
-		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
-			var rawKey = _v0.a;
-			var _v1 = _v0.b;
-			var rawValue = _v1.a;
-			var _v2 = $elm$url$Url$percentDecode(rawKey);
-			if (_v2.$ === 'Nothing') {
-				return dict;
-			} else {
-				var key = _v2.a;
-				var _v3 = $elm$url$Url$percentDecode(rawValue);
-				if (_v3.$ === 'Nothing') {
-					return dict;
-				} else {
-					var value = _v3.a;
-					return A3(
-						$elm$core$Dict$update,
-						key,
-						$elm$url$Url$Parser$addToParametersHelp(value),
-						dict);
-				}
-			}
-		} else {
-			return dict;
-		}
-	});
-var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
-	if (maybeQuery.$ === 'Nothing') {
-		return $elm$core$Dict$empty;
-	} else {
-		var qry = maybeQuery.a;
-		return A3(
-			$elm$core$List$foldr,
-			$elm$url$Url$Parser$addParam,
-			$elm$core$Dict$empty,
-			A2($elm$core$String$split, '&', qry));
-	}
+var $elm$core$Platform$Cmd$map = _Platform_map;
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
 };
-var $elm$url$Url$Parser$parse = F2(
-	function (_v0, url) {
-		var parser = _v0.a;
-		return $elm$url$Url$Parser$getFirstMatch(
-			parser(
-				A5(
-					$elm$url$Url$Parser$State,
-					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.path),
-					$elm$url$Url$Parser$prepareQuery(url.query),
-					url.fragment,
-					$elm$core$Basics$identity)));
+var $author$project$Navigation$PageInfo = F2(
+	function (name, page) {
+		return {name: name, page: page};
 	});
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $elm$url$Url$Parser$Parser = function (a) {
-	return {$: 'Parser', a: a};
-};
-var $elm$url$Url$Parser$mapState = F2(
-	function (func, _v0) {
-		var visited = _v0.visited;
-		var unvisited = _v0.unvisited;
-		var params = _v0.params;
-		var frag = _v0.frag;
-		var value = _v0.value;
-		return A5(
-			$elm$url$Url$Parser$State,
-			visited,
-			unvisited,
-			params,
-			frag,
-			func(value));
-	});
-var $elm$url$Url$Parser$map = F2(
-	function (subValue, _v0) {
-		var parseArg = _v0.a;
-		return $elm$url$Url$Parser$Parser(
-			function (_v1) {
-				var visited = _v1.visited;
-				var unvisited = _v1.unvisited;
-				var params = _v1.params;
-				var frag = _v1.frag;
-				var value = _v1.value;
-				return A2(
-					$elm$core$List$map,
-					$elm$url$Url$Parser$mapState(value),
-					parseArg(
-						A5($elm$url$Url$Parser$State, visited, unvisited, params, frag, subValue)));
-			});
-	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
-	});
-var $elm$url$Url$Parser$oneOf = function (parsers) {
-	return $elm$url$Url$Parser$Parser(
-		function (state) {
-			return A2(
-				$elm$core$List$concatMap,
-				function (_v0) {
-					var parser = _v0.a;
-					return parser(state);
-				},
-				parsers);
-		});
-};
-var $author$project$Navigation$CV = {$: 'CV'};
-var $author$project$Navigation$Redshift = {$: 'Redshift'};
 var $author$project$Navigation$pageList = _List_fromArray(
 	[
-		_Utils_Tuple2('#main', $author$project$Navigation$Main),
-		_Utils_Tuple2('#redshift', $author$project$Navigation$Redshift),
-		_Utils_Tuple2('#CV', $author$project$Navigation$CV),
-		_Utils_Tuple2('#apis', $author$project$Navigation$APITest)
+		_Utils_Tuple2(
+		'',
+		A2($author$project$Navigation$PageInfo, 'Home', $author$project$Navigation$Main)),
+		_Utils_Tuple2(
+		'#Experience',
+		A2($author$project$Navigation$PageInfo, 'Experience', $author$project$Navigation$CV)),
+		_Utils_Tuple2(
+		'#misc',
+		A2($author$project$Navigation$PageInfo, 'Misc', $author$project$Navigation$APITest))
 	]);
-var $elm$url$Url$Parser$s = function (str) {
-	return $elm$url$Url$Parser$Parser(
-		function (_v0) {
-			var visited = _v0.visited;
-			var unvisited = _v0.unvisited;
-			var params = _v0.params;
-			var frag = _v0.frag;
-			var value = _v0.value;
-			if (!unvisited.b) {
-				return _List_Nil;
-			} else {
-				var next = unvisited.a;
-				var rest = unvisited.b;
-				return _Utils_eq(next, str) ? _List_fromArray(
-					[
-						A5(
-						$elm$url$Url$Parser$State,
-						A2($elm$core$List$cons, next, visited),
-						rest,
-						params,
-						frag,
-						value)
-					]) : _List_Nil;
-			}
-		});
-};
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
-var $author$project$Navigation$routeParser = $elm$url$Url$Parser$oneOf(
-	A2(
-		$elm$core$List$map,
-		function (p) {
-			return A2(
-				$elm$url$Url$Parser$map,
-				p.b,
-				$elm$url$Url$Parser$s(p.a));
-		},
-		$author$project$Navigation$pageList));
+var $author$project$Navigation$pageMap = $elm$core$Dict$fromList($author$project$Navigation$pageList);
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -6483,26 +6509,102 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
-var $author$project$APIPage$Failure = {$: 'Failure'};
+var $author$project$APIPage$Failure = function (a) {
+	return {$: 'Failure', a: a};
+};
 var $author$project$APIPage$Success = function (a) {
 	return {$: 'Success', a: a};
 };
 var $author$project$APIPage$update = F2(
 	function (msg, model) {
-		var result = msg.a;
-		if (result.$ === 'Ok') {
-			var image = result.a;
-			return _Utils_Tuple2(
-				$author$project$APIPage$Success(image),
-				$elm$core$Platform$Cmd$none);
+		if (msg.$ === 'GotImage') {
+			var result = msg.a;
+			if (result.$ === 'Ok') {
+				var image = result.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							nasaImage: $author$project$APIPage$Success(image)
+						}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				var e = result.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							nasaImage: $author$project$APIPage$Failure(e)
+						}),
+					$elm$core$Platform$Cmd$none);
+			}
 		} else {
-			return _Utils_Tuple2($author$project$APIPage$Failure, $elm$core$Platform$Cmd$none);
+			var result = msg.a;
+			if (result.$ === 'Ok') {
+				var res = result.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							randomJoke: $author$project$APIPage$Success(res)
+						}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				var e = result.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							randomJoke: $author$project$APIPage$Failure(e)
+						}),
+					$elm$core$Platform$Cmd$none);
+			}
+		}
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$file$File$Download$url = function (href) {
+	return A2(
+		$elm$core$Task$perform,
+		$elm$core$Basics$never,
+		_File_downloadUrl(href));
+};
+var $author$project$CVPage$downloadCV = $elm$file$File$Download$url('Files/CV.pdf');
+var $author$project$CVPage$downloadThesis = $elm$file$File$Download$url('Files/thesis.pdf');
+var $author$project$CVPage$saveFrog = $elm$file$File$Download$url('Files/frog.jpg');
+var $author$project$CVPage$update = F2(
+	function (msg, mdl) {
+		switch (msg.$) {
+			case 'DownloadFile':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$downloadCV);
+			case 'DownloadThesis':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$downloadThesis);
+			case 'DownloadFrog':
+				return _Utils_Tuple2(mdl, $author$project$CVPage$saveFrog);
+			default:
+				var tab = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						mdl,
+						{tab: tab}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$MainPage$update = F2(
 	function (msg, model) {
 		var s = msg.a;
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+	});
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -6525,59 +6627,85 @@ var $author$project$Main$update = F2(
 				}
 			case 'UrlChanged':
 				var url = msg.a;
-				var route = A2($elm$url$Url$Parser$parse, $author$project$Navigation$routeParser, url);
-				_v2$2:
-				while (true) {
-					if (route.$ === 'Just') {
-						switch (route.a.$) {
-							case 'Main':
-								var _v3 = route.a;
-								var _v4 = $author$project$MainPage$init(_Utils_Tuple0);
-								var m = _v4.a;
-								var c = _v4.b;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											currentPage: $author$project$Navigation$Main,
-											mainModel: $elm$core$Maybe$Just(m),
-											url: url
-										}),
-									A2($elm$core$Platform$Cmd$map, $author$project$Main$MainMsg, c));
-							case 'APITest':
-								var _v5 = route.a;
-								var _v6 = $author$project$APIPage$init(_Utils_Tuple0);
-								var m = _v6.a;
-								var c = _v6.b;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											apiModel: $elm$core$Maybe$Just(m),
-											currentPage: $author$project$Navigation$APITest,
-											url: url
-										}),
-									A2($elm$core$Platform$Cmd$map, $author$project$Main$APIMsg, c));
-							default:
-								break _v2$2;
-						}
-					} else {
-						break _v2$2;
+				var urlString = A2(
+					$elm$core$Maybe$map,
+					function (v) {
+						return '#' + v;
+					},
+					$elm$core$List$head(
+						$elm$core$List$reverse(
+							A2(
+								$elm$core$String$split,
+								'#',
+								$elm$url$Url$toString(url)))));
+				var route = A2(
+					$elm$core$Dict$get,
+					A2($elm$core$Maybe$withDefault, '', urlString),
+					$author$project$Navigation$pageMap);
+				if (route.$ === 'Just') {
+					var pg = route.a;
+					var _v3 = pg.page;
+					switch (_v3.$) {
+						case 'Main':
+							var _v4 = $author$project$MainPage$init(_Utils_Tuple0);
+							var m = _v4.a;
+							var c = _v4.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentPage: $author$project$Navigation$Main,
+										mainModel: $elm$core$Maybe$Just(m),
+										url: url
+									}),
+								A2($elm$core$Platform$Cmd$map, $author$project$Main$MainMsg, c));
+						case 'APITest':
+							var _v5 = $author$project$APIPage$init(_Utils_Tuple0);
+							var m = _v5.a;
+							var c = _v5.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										apiModel: $elm$core$Maybe$Just(m),
+										currentPage: $author$project$Navigation$APITest,
+										url: url
+									}),
+								A2($elm$core$Platform$Cmd$map, $author$project$Main$APIMsg, c));
+						case 'Redshift':
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{currentPage: $author$project$Navigation$Redshift, url: url}),
+								$elm$core$Platform$Cmd$none);
+						default:
+							var _v6 = $author$project$CVPage$init(_Utils_Tuple0);
+							var m = _v6.a;
+							var c = _v6.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentPage: $author$project$Navigation$CV,
+										cvModel: $elm$core$Maybe$Just(m),
+										url: url
+									}),
+								A2($elm$core$Platform$Cmd$map, $author$project$Main$CVMsg, c));
 					}
+				} else {
+					var _v7 = $author$project$MainPage$init(_Utils_Tuple0);
+					var m = _v7.a;
+					var c = _v7.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								currentPage: $author$project$Navigation$Main,
+								mainModel: $elm$core$Maybe$Just(m),
+								url: url
+							}),
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$MainMsg, c));
 				}
-				var _v7 = $author$project$MainPage$init(_Utils_Tuple0);
-				var m = _v7.a;
-				var c = _v7.b;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							currentPage: $author$project$Navigation$Main,
-							mainModel: $elm$core$Maybe$Just(m),
-							message: $elm$core$Maybe$Just(url.path),
-							url: url
-						}),
-					A2($elm$core$Platform$Cmd$map, $author$project$Main$MainMsg, c));
 			case 'MainMsg':
 				var b = msg.a;
 				var _v8 = model.mainModel;
@@ -6596,7 +6724,7 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 'APIMsg':
 				var b = msg.a;
 				var _v10 = model.apiModel;
 				if (_v10.$ === 'Just') {
@@ -6614,6 +6742,24 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			default:
+				var c = msg.a;
+				var _v12 = model.cvModel;
+				if (_v12.$ === 'Just') {
+					var mdl = _v12.a;
+					var _v13 = A2($author$project$CVPage$update, c, mdl);
+					var m = _v13.a;
+					var cmd = _v13.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								cvModel: $elm$core$Maybe$Just(m)
+							}),
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$CVMsg, cmd));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$init = F3(
@@ -6621,7 +6767,7 @@ var $author$project$Main$init = F3(
 		var _v0 = A2(
 			$author$project$Main$update,
 			$author$project$Main$UrlChanged(url),
-			A6($author$project$Main$Model, key, url, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $author$project$Navigation$Main));
+			A7($author$project$Main$Model, key, url, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, $author$project$Navigation$Main));
 		var mdl = _v0.a;
 		var msg = _v0.b;
 		return _Utils_Tuple2(mdl, msg);
@@ -6798,6 +6944,14 @@ var $rtfeldman$elm_css$Css$Structure$compactHelp = F2(
 var $rtfeldman$elm_css$Css$Structure$Keyframes = function (a) {
 	return {$: 'Keyframes', a: a};
 };
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
 var $rtfeldman$elm_css$Css$Structure$withKeyframeDeclarations = F2(
 	function (keyframesByName, compactedDeclarations) {
 		return A2(
@@ -6828,25 +6982,6 @@ var $rtfeldman$elm_css$Css$Structure$compactStylesheet = function (_v0) {
 	var finalDeclarations = A2($rtfeldman$elm_css$Css$Structure$withKeyframeDeclarations, keyframesByName, compactedDeclarations);
 	return {charset: charset, declarations: finalDeclarations, imports: imports, namespaces: namespaces};
 };
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $rtfeldman$elm_css$Css$Structure$Output$charsetToString = function (charset) {
 	return A2(
 		$elm$core$Maybe$withDefault,
@@ -7157,6 +7292,14 @@ var $rtfeldman$elm_css$Css$Structure$Output$prettyPrint = function (_v0) {
 					A2($elm$core$List$map, $rtfeldman$elm_css$Css$Structure$Output$prettyPrintDeclaration, declarations))
 				])));
 };
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
 var $rtfeldman$elm_css$Css$Structure$CounterStyle = function (a) {
 	return {$: 'CounterStyle', a: a};
 };
@@ -7692,15 +7835,6 @@ var $rtfeldman$elm_css$Hash$fromString = function (str) {
 		_Utils_chr('_'),
 		$rtfeldman$elm_hex$Hex$toString(
 			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString, $rtfeldman$elm_css$Hash$murmurSeed, str)));
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
 };
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$last = function (list) {
 	last:
@@ -8758,28 +8892,6 @@ var $rtfeldman$elm_css$Css$hex = function (str) {
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
-var $rtfeldman$elm_css$Css$cssFunction = F2(
-	function (funcName, args) {
-		return funcName + ('(' + (A2($elm$core$String$join, ', ', args) + ')'));
-	});
-var $rtfeldman$elm_css$Css$rgb = F3(
-	function (r, g, b) {
-		return {
-			alpha: 1,
-			blue: b,
-			color: $rtfeldman$elm_css$Css$Structure$Compatible,
-			green: g,
-			red: r,
-			value: A2(
-				$rtfeldman$elm_css$Css$cssFunction,
-				'rgb',
-				A2(
-					$elm$core$List$map,
-					$elm$core$String$fromInt,
-					_List_fromArray(
-						[r, g, b])))
-		};
-	});
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $rtfeldman$elm_css$VirtualDom$Styled$accumulateStyles = F2(
 	function (_v0, styles) {
@@ -9268,6 +9380,45 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled = function (vdom) {
 	}
 };
 var $rtfeldman$elm_css$Html$Styled$toUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled;
+var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
+	function (a, b, c) {
+		return {$: 'Attribute', a: a, b: b, c: c};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$murmurSeed = 15739;
+var $rtfeldman$elm_css$VirtualDom$Styled$getClassname = function (styles) {
+	return $elm$core$List$isEmpty(styles) ? 'unstyled' : A2(
+		$elm$core$String$cons,
+		_Utils_chr('_'),
+		$rtfeldman$elm_hex$Hex$toString(
+			A2(
+				$rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString,
+				$rtfeldman$elm_css$VirtualDom$Styled$murmurSeed,
+				$rtfeldman$elm_css$Css$Preprocess$Resolve$compile(
+					$elm$core$List$singleton(
+						$rtfeldman$elm_css$Css$Preprocess$stylesheet(
+							$elm$core$List$singleton(
+								A2(
+									$rtfeldman$elm_css$VirtualDom$Styled$makeSnippet,
+									styles,
+									$rtfeldman$elm_css$Css$Structure$UniversalSelectorSequence(_List_Nil)))))))));
+};
+var $elm$virtual_dom$VirtualDom$property = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_property,
+			_VirtualDom_noInnerHtmlOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $rtfeldman$elm_css$Html$Styled$Internal$css = function (styles) {
+	var classname = $rtfeldman$elm_css$VirtualDom$Styled$getClassname(styles);
+	var classProperty = A2(
+		$elm$virtual_dom$VirtualDom$property,
+		'className',
+		$elm$json$Json$Encode$string(classname));
+	return A3($rtfeldman$elm_css$VirtualDom$Styled$Attribute, classProperty, styles, classname);
+};
+var $rtfeldman$elm_css$Html$Styled$Attributes$css = $rtfeldman$elm_css$Html$Styled$Internal$css;
 var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
 	function (a, b, c) {
 		return {$: 'Node', a: a, b: b, c: c};
@@ -9276,19 +9427,38 @@ var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$St
 var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
 var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
 var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
+var $rtfeldman$elm_css$Html$Styled$h2 = $rtfeldman$elm_css$Html$Styled$node('h2');
 var $rtfeldman$elm_css$Html$Styled$h3 = $rtfeldman$elm_css$Html$Styled$node('h3');
-var $rtfeldman$elm_css$Html$Styled$img = $rtfeldman$elm_css$Html$Styled$node('img');
-var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
-	function (a, b, c) {
-		return {$: 'Attribute', a: a, b: b, c: c};
-	});
-var $elm$virtual_dom$VirtualDom$property = F2(
+var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4');
+var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
-			_VirtualDom_property,
-			_VirtualDom_noInnerHtmlOrFormAction(key),
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$height = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $rtfeldman$elm_css$Html$Styled$iframe = $rtfeldman$elm_css$Html$Styled$node('iframe');
+var $rtfeldman$elm_css$Html$Styled$img = $rtfeldman$elm_css$Html$Styled$node('img');
+var $rtfeldman$elm_css$Css$prop1 = F2(
+	function (key, arg) {
+		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
+	});
+var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
+var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
 var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 	function (key, value) {
 		return A3(
@@ -9297,7 +9467,34 @@ var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 			_List_Nil,
 			'');
 	});
-var $elm$json$Json$Encode$string = _Json_wrap;
+var $rtfeldman$elm_css$Html$Styled$Attributes$property = $rtfeldman$elm_css$VirtualDom$Styled$property;
+var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
+	function (units, unitLabel, numericValue) {
+		return {
+			absoluteLength: $rtfeldman$elm_css$Css$Structure$Compatible,
+			calc: $rtfeldman$elm_css$Css$Structure$Compatible,
+			flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible,
+			fontSize: $rtfeldman$elm_css$Css$Structure$Compatible,
+			length: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
+			numericValue: numericValue,
+			textIndent: $rtfeldman$elm_css$Css$Structure$Compatible,
+			unitLabel: unitLabel,
+			units: units,
+			value: _Utils_ap(
+				$elm$core$String$fromFloat(numericValue),
+				unitLabel)
+		};
+	});
+var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
 var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -9323,22 +9520,23 @@ var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
 		$elm$virtual_dom$VirtualDom$text(str));
 };
 var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
+var $rtfeldman$elm_css$Html$Styled$Attributes$width = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
 var $author$project$APIPage$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
-		_List_fromArray(
-			[
-				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'background', 'black'),
-				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'height', '2000px')
-			]),
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
 				$rtfeldman$elm_css$Html$Styled$div,
 				_List_fromArray(
 					[
-						A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'text-align', 'center'),
-						A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'color', '#90e')
+						A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'text-align', 'center')
 					]),
 				_List_fromArray(
 					[
@@ -9350,6 +9548,89 @@ var $author$project$APIPage$view = function (model) {
 								$rtfeldman$elm_css$Html$Styled$text('API page')
 							])),
 						A2(
+						$rtfeldman$elm_css$Html$Styled$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('On this page I put some fun apis I like.')
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'border', '3px solid white'),
+								A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'border-radius', '10px'),
+								A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'width', '500px'),
+								A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin', 'auto')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$h2,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text('Random (spooky) joke')
+									])),
+								function () {
+								var _v0 = model.randomJoke;
+								switch (_v0.$) {
+									case 'Failure':
+										var e = _v0.a;
+										if (e.$ === 'BadStatus') {
+											var status = e.a;
+											return A2(
+												$rtfeldman$elm_css$Html$Styled$p,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$rtfeldman$elm_css$Html$Styled$h3,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$rtfeldman$elm_css$Html$Styled$text('There was an error getting the joke with status:')
+															])),
+														A2(
+														$rtfeldman$elm_css$Html$Styled$img,
+														_List_fromArray(
+															[
+																$rtfeldman$elm_css$Html$Styled$Attributes$src(
+																'https://http.cat/' + $elm$core$String$fromInt(status))
+															]),
+														_List_Nil)
+													]));
+										} else {
+											return $rtfeldman$elm_css$Html$Styled$text('Error loading joke');
+										}
+									case 'Loading':
+										return $rtfeldman$elm_css$Html$Styled$text('Loading...');
+									default:
+										var joke = _v0.a;
+										return A2(
+											$rtfeldman$elm_css$Html$Styled$div,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													$rtfeldman$elm_css$Html$Styled$h4,
+													_List_Nil,
+													_List_fromArray(
+														[
+															$rtfeldman$elm_css$Html$Styled$text(joke.setup)
+														])),
+													A2(
+													$rtfeldman$elm_css$Html$Styled$h4,
+													_List_Nil,
+													_List_fromArray(
+														[
+															$rtfeldman$elm_css$Html$Styled$text(joke.delivery)
+														]))
+												]));
+								}
+							}()
+							])),
+						A2(
 						$rtfeldman$elm_css$Html$Styled$h3,
 						_List_Nil,
 						_List_fromArray(
@@ -9357,18 +9638,67 @@ var $author$project$APIPage$view = function (model) {
 								$rtfeldman$elm_css$Html$Styled$text('Nasa Daily Image')
 							])),
 						function () {
-						switch (model.$) {
+						var _v2 = model.nasaImage;
+						switch (_v2.$) {
 							case 'Failure':
-								return $rtfeldman$elm_css$Html$Styled$text('Error loading image');
+								var e = _v2.a;
+								if (e.$ === 'BadStatus') {
+									var status = e.a;
+									return A2(
+										$rtfeldman$elm_css$Html$Styled$p,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$rtfeldman$elm_css$Html$Styled$h2,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$rtfeldman$elm_css$Html$Styled$text('There was an error getting the image with status:')
+													])),
+												A2(
+												$rtfeldman$elm_css$Html$Styled$img,
+												_List_fromArray(
+													[
+														$rtfeldman$elm_css$Html$Styled$Attributes$src(
+														'https://http.cat/' + $elm$core$String$fromInt(status))
+													]),
+												_List_Nil)
+											]));
+								} else {
+									return $rtfeldman$elm_css$Html$Styled$text('Error loading image');
+								}
 							case 'Loading':
 								return $rtfeldman$elm_css$Html$Styled$text('Loading...');
 							default:
-								var image = model.a;
-								return A2(
+								var image = _v2.a;
+								return (image.mediaType === 'video') ? A2(
+									$rtfeldman$elm_css$Html$Styled$iframe,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$width(560),
+											$rtfeldman$elm_css$Html$Styled$Attributes$height(315),
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$marginBottom(
+													$rtfeldman$elm_css$Css$px(30))
+												])),
+											$rtfeldman$elm_css$Html$Styled$Attributes$src(image.url),
+											A2(
+											$rtfeldman$elm_css$Html$Styled$Attributes$property,
+											'frameborder',
+											$elm$json$Json$Encode$string('0')),
+											A2(
+											$rtfeldman$elm_css$Html$Styled$Attributes$property,
+											'allowfullscreen',
+											$elm$json$Json$Encode$string('true'))
+										]),
+									_List_Nil) : A2(
 									$rtfeldman$elm_css$Html$Styled$img,
 									_List_fromArray(
 										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$src(image)
+											$rtfeldman$elm_css$Html$Styled$Attributes$src(image.url)
 										]),
 									_List_Nil);
 						}
@@ -9376,40 +9706,8 @@ var $author$project$APIPage$view = function (model) {
 					]))
 			]));
 };
-var $rtfeldman$elm_css$Css$prop1 = F2(
-	function (key, arg) {
-		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
-	});
 var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
-var $rtfeldman$elm_css$VirtualDom$Styled$murmurSeed = 15739;
-var $rtfeldman$elm_css$VirtualDom$Styled$getClassname = function (styles) {
-	return $elm$core$List$isEmpty(styles) ? 'unstyled' : A2(
-		$elm$core$String$cons,
-		_Utils_chr('_'),
-		$rtfeldman$elm_hex$Hex$toString(
-			A2(
-				$rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString,
-				$rtfeldman$elm_css$VirtualDom$Styled$murmurSeed,
-				$rtfeldman$elm_css$Css$Preprocess$Resolve$compile(
-					$elm$core$List$singleton(
-						$rtfeldman$elm_css$Css$Preprocess$stylesheet(
-							$elm$core$List$singleton(
-								A2(
-									$rtfeldman$elm_css$VirtualDom$Styled$makeSnippet,
-									styles,
-									$rtfeldman$elm_css$Css$Structure$UniversalSelectorSequence(_List_Nil)))))))));
-};
-var $rtfeldman$elm_css$Html$Styled$Internal$css = function (styles) {
-	var classname = $rtfeldman$elm_css$VirtualDom$Styled$getClassname(styles);
-	var classProperty = A2(
-		$elm$virtual_dom$VirtualDom$property,
-		'className',
-		$elm$json$Json$Encode$string(classname));
-	return A3($rtfeldman$elm_css$VirtualDom$Styled$Attribute, classProperty, styles, classname);
-};
-var $rtfeldman$elm_css$Html$Styled$Attributes$css = $rtfeldman$elm_css$Html$Styled$Internal$css;
 var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
-var $rtfeldman$elm_css$Html$Styled$h2 = $rtfeldman$elm_css$Html$Styled$node('h2');
 var $rtfeldman$elm_css$Css$Preprocess$ApplyStyles = function (a) {
 	return {$: 'ApplyStyles', a: a};
 };
@@ -9474,31 +9772,6 @@ var $rtfeldman$elm_css$Css$Internal$getOverloadedProperty = F3(
 		}
 	});
 var $rtfeldman$elm_css$Css$Internal$IncompatibleUnits = {$: 'IncompatibleUnits'};
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
-	function (units, unitLabel, numericValue) {
-		return {
-			absoluteLength: $rtfeldman$elm_css$Css$Structure$Compatible,
-			calc: $rtfeldman$elm_css$Css$Structure$Compatible,
-			flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible,
-			fontSize: $rtfeldman$elm_css$Css$Structure$Compatible,
-			length: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
-			numericValue: numericValue,
-			textIndent: $rtfeldman$elm_css$Css$Structure$Compatible,
-			unitLabel: unitLabel,
-			units: units,
-			value: _Utils_ap(
-				$elm$core$String$fromFloat(numericValue),
-				unitLabel)
-		};
-	});
 var $rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty = A3($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$Internal$IncompatibleUnits, '', 0);
 var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 	return A3(
@@ -9507,10 +9780,553 @@ var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 		'justify-content',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
+var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
-var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
-var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
+var $rtfeldman$elm_css$Css$paddingLeft = $rtfeldman$elm_css$Css$prop1('padding-left');
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
+var $author$project$CVPage$DownloadThesis = {$: 'DownloadThesis'};
+var $author$project$CVPage$abstract = 'Black holes in dimensions > 4 can take on new properties and topologies\r\n  compared to those in 4 dimensions. We examine the Myers-Perry black hole,\r\n  a rotating black hole in D > 4 dimensions and take it to the ultra-spinning\r\n  limit. In this limit, where the horizon exhibits two widely separated length scales,\r\n  we explicitly show that Myers-Perry black holes are described by the blackfold\r\n  effective theory up to first order in a derivative expansion. We conjecture that\r\n  the second order blackfold approximation of Myers-Perry black holes can be\r\n  obtained by applying the fluid/gravity correspondence. Using results obtained\r\n  in this manner, we examine the expected higher order metrics and associated\r\n  energy-momentum tensors. We review the comparison of the Gregory-La\r\n  amme\r\n  instability to hydrodynamic perturbations.';
+var $rtfeldman$elm_css$Html$Styled$br = $rtfeldman$elm_css$Html$Styled$node('br');
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
+var $rtfeldman$elm_css$Css$prop3 = F4(
+	function (key, argA, argB, argC) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value])));
+	});
+var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
+var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
+var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
+	var value = _v0.value;
+	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
+};
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value])));
+	});
+var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
+var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $author$project$CVPage$buttonStyles = _List_fromArray(
+	[
+		A2(
+		$rtfeldman$elm_css$Css$padding2,
+		$rtfeldman$elm_css$Css$px(10),
+		$rtfeldman$elm_css$Css$px(25)),
+		$rtfeldman$elm_css$Css$fontSize(
+		$rtfeldman$elm_css$Css$px(20)),
+		$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
+		$rtfeldman$elm_css$Css$color(
+		$rtfeldman$elm_css$Css$hex('#ffffff')),
+		$rtfeldman$elm_css$Css$backgroundColor(
+		$rtfeldman$elm_css$Css$hex('#530082')),
+		$rtfeldman$elm_css$Css$borderRadius(
+		$rtfeldman$elm_css$Css$px(6)),
+		A3(
+		$rtfeldman$elm_css$Css$border3,
+		$rtfeldman$elm_css$Css$px(1),
+		$rtfeldman$elm_css$Css$solid,
+		$rtfeldman$elm_css$Css$hex('#3f0e48')),
+		A2($rtfeldman$elm_css$Css$property, 'font-family', 'calibri'),
+		$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
+		$rtfeldman$elm_css$Css$maxHeight(
+		$rtfeldman$elm_css$Css$px(60)),
+		$rtfeldman$elm_css$Css$maxWidth(
+		$rtfeldman$elm_css$Css$px(200)),
+		$rtfeldman$elm_css$Css$hover(
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$backgroundColor(
+				$rtfeldman$elm_css$Css$hex('#380057')),
+				$rtfeldman$elm_css$Css$borderRadius(
+				$rtfeldman$elm_css$Css$px(10))
+			]))
+	]);
+var $rtfeldman$elm_css$Css$prop4 = F5(
+	function (key, argA, argB, argC, argD) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value, argD.value])));
+	});
+var $rtfeldman$elm_css$Css$margin4 = $rtfeldman$elm_css$Css$prop4('margin');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
+	function (eventName, handler) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$CVPage$viewAcademic = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					A4(
+					$rtfeldman$elm_css$Css$margin4,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(60),
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('My academic interests and experience lie in theoretical and computational physics')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h2,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Master\'s thesis:')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Abstract')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text($author$project$CVPage$abstract)
+				])),
+			A2($rtfeldman$elm_css$Html$Styled$br, _List_Nil, _List_Nil),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$button,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadThesis),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Download Thesis')
+				]))
+		]));
+var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
+	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
+};
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
+var $author$project$CVPage$viewHobbies = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Hobbies')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('I enjoy singing in choir or on my own. Most recently I was a part of the '),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://bachkoret.dk/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Københavns Bachkor')
+						])),
+					$rtfeldman$elm_css$Html$Styled$text('. Because of Corona, I had fewer concerts with them than planned but enjoyed performing the Bach Christmas Oratorio with them in 2019 and 2021.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Previously, I sung with Les Muses Chorale while studying at McGill University.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$iframe,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$width(560),
+					$rtfeldman$elm_css$Html$Styled$Attributes$height(100),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$marginBottom(
+							$rtfeldman$elm_css$Css$px(30))
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$src('https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/450199737&color=%233a3a3a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'frameborder',
+					$elm$json$Json$Encode$string('0')),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'allowfullscreen',
+					$elm$json$Json$Encode$string('true'))
+				]),
+			_List_Nil),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('I also enjoy video making/editing')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$iframe,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$width(560),
+					$rtfeldman$elm_css$Html$Styled$Attributes$height(315),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$marginBottom(
+							$rtfeldman$elm_css$Css$px(30))
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$src('https://www.youtube.com/embed/ZAe2AKLzVSw'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'frameborder',
+					$elm$json$Json$Encode$string('0')),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$Attributes$property,
+					'allowfullscreen',
+					$elm$json$Json$Encode$string('true'))
+				]),
+			_List_Nil)
+		]));
+var $author$project$CVPage$Hobbies = {$: 'Hobbies'};
+var $author$project$CVPage$SwitchTab = function (a) {
+	return {$: 'SwitchTab', a: a};
+};
+var $author$project$CVPage$Work = {$: 'Work'};
+var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
+var $rtfeldman$elm_css$Css$column = _Utils_update(
+	$rtfeldman$elm_css$Css$row,
+	{value: 'column'});
+var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $author$project$CVPage$viewTabs = function (mdl) {
+	var tabStyles = $rtfeldman$elm_css$Html$Styled$Attributes$css(
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$padding(
+				$rtfeldman$elm_css$Css$px(25)),
+				$rtfeldman$elm_css$Css$displayFlex,
+				$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+				A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
+				$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer)
+			]));
+	var chosenTab = function (tab) {
+		return $rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_Utils_eq(mdl.tab, tab) ? _List_fromArray(
+				[
+					A3(
+					$rtfeldman$elm_css$Css$border3,
+					$rtfeldman$elm_css$Css$px(2),
+					$rtfeldman$elm_css$Css$solid,
+					$rtfeldman$elm_css$Css$hex('757575')),
+					$rtfeldman$elm_css$Css$borderRadius(
+					$rtfeldman$elm_css$Css$px(20))
+				]) : _List_Nil);
+	};
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+						$rtfeldman$elm_css$Css$width(
+						$rtfeldman$elm_css$Css$pct(10)),
+						$rtfeldman$elm_css$Css$borderRadius(
+						$rtfeldman$elm_css$Css$px(20)),
+						$rtfeldman$elm_css$Css$backgroundColor(
+						$rtfeldman$elm_css$Css$hex('#424242')),
+						$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold),
+						$rtfeldman$elm_css$Css$height(
+						$rtfeldman$elm_css$Css$pct(100))
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Academic)),
+						tabStyles,
+						chosenTab($author$project$CVPage$Academic)
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Academic')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Work)),
+						tabStyles,
+						chosenTab($author$project$CVPage$Work)
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Work')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Hobbies)),
+						tabStyles,
+						chosenTab($author$project$CVPage$Hobbies)
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Hobbies')
+					]))
+			]));
+};
+var $author$project$CVPage$DownloadFile = {$: 'DownloadFile'};
+var $author$project$CVPage$viewWork = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$displayFlex,
+					$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+					$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('My most recent position was at '),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://www.smallbrooks.com/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
+						])),
+					$rtfeldman$elm_css$Html$Styled$text(' where I was employed as a software developer, working on crowdfunding platforms.'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('An example of one of the platforms we\'ve made is '),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$a,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$href('https://crowdfunding.coop.dk/'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Coop Crowdfunding')
+								])),
+							$rtfeldman$elm_css$Html$Styled$text(' which provides a great way of getting new products on the market, allowing for the general crowd to support farms and small businesses.')
+						]))
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$button,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$CVPage$DownloadFile),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css($author$project$CVPage$buttonStyles)
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Download CV')
+				]))
+		]));
+var $author$project$CVPage$view = function (mdl) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h1,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+							]))
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Experience')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h4,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+							]))
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Note - these pages are still under construction')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$padding(
+								$rtfeldman$elm_css$Css$px(10))
+							]))
+					]),
+				_List_fromArray(
+					[
+						$author$project$CVPage$viewTabs(mdl),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$paddingLeft(
+										$rtfeldman$elm_css$Css$px(50)),
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(100))
+									]))
+							]),
+						_List_fromArray(
+							[
+								function () {
+								var _v0 = mdl.tab;
+								switch (_v0.$) {
+									case 'Academic':
+										return $author$project$CVPage$viewAcademic;
+									case 'Work':
+										return $author$project$CVPage$viewWork;
+									default:
+										return $author$project$CVPage$viewHobbies;
+								}
+							}()
+							]))
+					]))
+			]));
+};
+var $rtfeldman$elm_css$Css$paddingBottom = $rtfeldman$elm_css$Css$prop1('padding-bottom');
 var $author$project$MainPage$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -9533,27 +10349,14 @@ var $author$project$MainPage$view = function (model) {
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+								$rtfeldman$elm_css$Css$paddingBottom(
+								$rtfeldman$elm_css$Css$px(50))
 							]))
 					]),
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text('Main page')
-					])),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$h2,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-							]))
-					]),
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('Welcome')
+						$rtfeldman$elm_css$Html$Styled$text('Sacha Perry-Fagant')
 					])),
 				A2(
 				$rtfeldman$elm_css$Html$Styled$div,
@@ -9563,97 +10366,107 @@ var $author$project$MainPage$view = function (model) {
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left)
 							]))
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$rtfeldman$elm_css$Html$Styled$img,
+						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$Attributes$src('Files/placeHolder.gif')
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(100))
+									]))
 							]),
-						_List_Nil)
-					])),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('I am currently searching for a PhD in physics')
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$img,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$src('Files/SPF.png'),
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Css$height(
+												$rtfeldman$elm_css$Css$px(300)),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(10))
+											]))
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$p,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$fontSize(
+										$rtfeldman$elm_css$Css$px(20)),
+										$rtfeldman$elm_css$Css$width(
+										$rtfeldman$elm_css$Css$pct(200))
+									]))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text('I am a physicist and software developer interested in cosmology and gravity.')
+									])),
+								A2(
+								$rtfeldman$elm_css$Html$Styled$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text('I am currently searching for employment in physics or software development.')
+									]))
+							]))
 					]))
 			]));
 };
-var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
-var $rtfeldman$elm_css$Css$prop3 = F4(
-	function (key, argA, argB, argC) {
-		return A2(
-			$rtfeldman$elm_css$Css$property,
-			key,
-			A2(
-				$elm$core$String$join,
-				' ',
-				_List_fromArray(
-					[argA.value, argB.value, argC.value])));
-	});
-var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
-var $rtfeldman$elm_css$Css$borderBottomColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'border-bottom-color', c.value);
-};
-var $rtfeldman$elm_css$Css$borderTopLeftRadius = $rtfeldman$elm_css$Css$prop1('border-top-left-radius');
-var $rtfeldman$elm_css$Css$borderTopRightRadius = $rtfeldman$elm_css$Css$prop1('border-top-right-radius');
-var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
-var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
-var $rtfeldman$elm_css$Css$transparent = {color: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'transparent'};
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
+var $rtfeldman$elm_css$Css$textDecoration = $rtfeldman$elm_css$Css$prop1('text-decoration');
 var $author$project$Tab$activeCss = $rtfeldman$elm_css$Html$Styled$Attributes$css(
 	_List_fromArray(
 		[
-			A3(
-			$rtfeldman$elm_css$Css$border3,
-			$rtfeldman$elm_css$Css$px(3),
-			$rtfeldman$elm_css$Css$solid,
-			$rtfeldman$elm_css$Css$hex('efefef')),
-			$rtfeldman$elm_css$Css$borderBottomColor($rtfeldman$elm_css$Css$transparent),
-			$rtfeldman$elm_css$Css$borderTopLeftRadius(
-			$rtfeldman$elm_css$Css$px(2)),
-			$rtfeldman$elm_css$Css$borderTopRightRadius(
-			$rtfeldman$elm_css$Css$px(2)),
-			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(10)),
 			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$pct(100)),
+			$rtfeldman$elm_css$Css$px(120)),
 			$rtfeldman$elm_css$Css$displayFlex,
-			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+			A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
+			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none),
+			$rtfeldman$elm_css$Css$backgroundColor(
+			$rtfeldman$elm_css$Css$hex('#616161')),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(10))
 		]));
-var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
-	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
-};
-var $rtfeldman$elm_css$Css$borderBottom3 = $rtfeldman$elm_css$Css$prop3('border-bottom');
 var $author$project$Tab$inactiveCss = $rtfeldman$elm_css$Html$Styled$Attributes$css(
 	_List_fromArray(
 		[
-			A3(
-			$rtfeldman$elm_css$Css$borderBottom3,
-			$rtfeldman$elm_css$Css$px(3),
-			$rtfeldman$elm_css$Css$solid,
-			$rtfeldman$elm_css$Css$hex('efefef')),
-			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(10)),
 			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$pct(100)),
+			$rtfeldman$elm_css$Css$px(120)),
 			$rtfeldman$elm_css$Css$displayFlex,
-			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+			A2($rtfeldman$elm_css$Css$property, 'color', 'white'),
+			$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(10))
 		]));
-var $elm$core$String$replace = F3(
-	function (before, after, string) {
-		return A2(
-			$elm$core$String$join,
-			after,
-			A2($elm$core$String$split, before, string));
-	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
 var $rtfeldman$elm_css$Css$alignItems = function (fn) {
 	return A3(
 		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
@@ -9661,7 +10474,18 @@ var $rtfeldman$elm_css$Css$alignItems = function (fn) {
 		'align-items',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $rtfeldman$elm_css$Css$spaceBetween = $rtfeldman$elm_css$Css$prop1('space-between');
+var $rtfeldman$elm_css$Css$prop5 = F6(
+	function (key, argA, argB, argC, argD, argE) {
+		return A2(
+			$rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					[argA.value, argB.value, argC.value, argD.value, argE.value])));
+	});
+var $rtfeldman$elm_css$Css$boxShadow5 = $rtfeldman$elm_css$Css$prop5('box-shadow');
 var $author$project$Tab$tabsWrapper = function (tabs) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -9672,12 +10496,20 @@ var $author$project$Tab$tabsWrapper = function (tabs) {
 					[
 						$rtfeldman$elm_css$Css$displayFlex,
 						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$spaceBetween)
+						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$left),
+						$rtfeldman$elm_css$Css$backgroundColor(
+						$rtfeldman$elm_css$Css$hex('#424242')),
+						A5(
+						$rtfeldman$elm_css$Css$boxShadow5,
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$px(5),
+						$rtfeldman$elm_css$Css$px(0),
+						$rtfeldman$elm_css$Css$hex('#777'))
 					]))
 			]),
 		tabs);
 };
-var $elm$core$String$toUpper = _String_toUpper;
 var $author$project$Navigation$viewTabs = function (page) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -9688,12 +10520,11 @@ var $author$project$Navigation$viewTabs = function (page) {
 				A2(
 					$elm$core$List$map,
 					function (p) {
-						var name = A3($elm$core$String$replace, '#', '', p.a);
 						return A2(
 							$rtfeldman$elm_css$Html$Styled$a,
 							_List_fromArray(
 								[
-									_Utils_eq(p.b, page) ? $author$project$Tab$activeCss : $author$project$Tab$inactiveCss,
+									_Utils_eq(p.b.page, page) ? $author$project$Tab$activeCss : $author$project$Tab$inactiveCss,
 									$rtfeldman$elm_css$Html$Styled$Attributes$href(p.a)
 								]),
 							_List_fromArray(
@@ -9703,8 +10534,7 @@ var $author$project$Navigation$viewTabs = function (page) {
 									_List_Nil,
 									_List_fromArray(
 										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											$elm$core$String$toUpper(name))
+											$rtfeldman$elm_css$Html$Styled$text(p.b.name)
 										]))
 								]));
 					},
@@ -9726,17 +10556,10 @@ var $author$project$Main$view = function (model) {
 							_List_fromArray(
 								[
 									$rtfeldman$elm_css$Css$backgroundColor(
-									A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0)),
+									$rtfeldman$elm_css$Css$hex('#121212')),
 									$rtfeldman$elm_css$Css$color(
-									$rtfeldman$elm_css$Css$hex('#a400ff'))
-								])),
-							A2(
-							$rtfeldman$elm_css$Css$Global$typeSelector,
-							'::selection',
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$backgroundColor(
-									A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0))
+									$rtfeldman$elm_css$Css$hex('#c967ff')),
+									A2($rtfeldman$elm_css$Css$property, 'font-family', 'arial')
 								]))
 						])),
 					$author$project$Navigation$viewTabs(model.currentPage),
@@ -9748,9 +10571,7 @@ var $author$project$Main$view = function (model) {
 						var _v0 = model.currentPage;
 						switch (_v0.$) {
 							case 'Redshift':
-								return $elm$html$Html$text('This will be the redshift page... later');
-							case 'CV':
-								return $elm$html$Html$text('CV page... so much experience wow');
+								return $elm$html$Html$text('This page is under construction');
 							case 'APITest':
 								var _v1 = model.apiModel;
 								if (_v1.$ === 'Just') {
@@ -9763,10 +10584,22 @@ var $author$project$Main$view = function (model) {
 								} else {
 									return $elm$html$Html$text('Page load fail');
 								}
-							default:
-								var _v2 = model.mainModel;
+							case 'CV':
+								var _v2 = model.cvModel;
 								if (_v2.$ === 'Just') {
-									var mmd = _v2.a;
+									var cvMdl = _v2.a;
+									return A2(
+										$elm$html$Html$map,
+										$author$project$Main$CVMsg,
+										$rtfeldman$elm_css$Html$Styled$toUnstyled(
+											$author$project$CVPage$view(cvMdl)));
+								} else {
+									return $elm$html$Html$text('Page load fail');
+								}
+							default:
+								var _v3 = model.mainModel;
+								if (_v3.$ === 'Just') {
+									var mmd = _v3.a;
 									return A2(
 										$elm$html$Html$map,
 										$author$project$Main$MainMsg,
@@ -9778,7 +10611,7 @@ var $author$project$Main$view = function (model) {
 						}
 					}())
 				])),
-		title: 'Soup time'
+		title: 'Sacha Perry-Fagant'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
