@@ -9972,6 +9972,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
 var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
 var $author$project$CVPage$viewHalloween = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -10010,7 +10011,8 @@ var $author$project$CVPage$viewHalloween = A2(
 					$rtfeldman$elm_css$Html$Styled$a,
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2021/')
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2021/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
 						]),
 					_List_fromArray(
 						[
@@ -10042,7 +10044,8 @@ var $author$project$CVPage$viewHalloween = A2(
 					$rtfeldman$elm_css$Html$Styled$a,
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2020/')
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2020/'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
 						]),
 					_List_fromArray(
 						[
@@ -10065,7 +10068,8 @@ var $author$project$CVPage$viewHalloween = A2(
 					$rtfeldman$elm_css$Html$Styled$a,
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://play.google.com/store/apps/details?id=com.HalloweenInc.HalloweenApp')
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://play.google.com/store/apps/details?id=com.HalloweenInc.HalloweenApp'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
 						]),
 					_List_fromArray(
 						[
@@ -10087,7 +10091,6 @@ var $author$project$CVPage$viewHalloween = A2(
 						]))
 				]))
 		]));
-var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
 var $author$project$CVPage$viewHobbies = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
