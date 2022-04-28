@@ -9972,6 +9972,121 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
 var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $author$project$CVPage$viewHalloween = A2(
+	$rtfeldman$elm_css$Html$Styled$div,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Css$margin2,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(30))
+				]))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h2,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Halloween')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('One of my hobbies is event planning, specifically for Halloween (though occasionally I will organize events for other holidays/themes). For the past few years I have organized elaborate Halloween parties with an accompanying app. The app presents the players with a story, along with tasks they must complete to progress the plot. Most of the \'tasks\' are Halloween games I\'ve come up with (complete with drinking rules), along with some riddle solving. The apps cannot be played without the real life activities, but one can still explore the apps with the codes provided on the github page. The web apps were designed for mobile, but still work fine on desktop.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2021/')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Halloween 2021')
+						]))
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('The premise of the party (sent to the guests before arriving) is as follows:'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('\"It is a dark and stormy night, you and your friends are heading for a Halloween party. Your car, which somehow fits 13 people, suddenly breaks down. There is no phone service this far out into the Danish woods. Luckily, you spy a looming manor in the distance. Making your way over you are greeted inside by a strange looking host...\"')
+						])),
+					$rtfeldman$elm_css$Html$Styled$text('The host, a strange insect looking creature, greets the guests as if they were all old friends while admitting that his vision has deteriorated. He insists they stay for the evening. In order not to arouse suspicion of their human nature the group complies. The groups make their way through the rooms, entertaining their host\'s whims by playing games. When their host\'s back is turned they encounter his REAL friends, who express their disdain for the old man. Upon visiting the oracle, the guests learn that there is a strange dark power in the manor and urges them to investigate. If the guests lose enough health (by performing badly in games), they will become ghosts and attempt to turn the remaining guests into ghosts as well.'),
+					$rtfeldman$elm_css$Html$Styled$text(' The app was made in React.')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://pf-physics.github.io/halloween2020/')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Halloween 2020')
+						]))
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('In 2020, Halloween fell on a full moon and the event revolved around this fact. The guests are split up into two groups: mystics (consisting of witches, vampires and werewolves) and undead (skeletons, zombies, ghosts). Both groups are informed separately that, although the moon is full, its power is dull and that the OTHER group is responsible for its state. To solve this dispute, a series of challenges have been put forth to determine which group is superior. As they complete challenges, they find evidence that something much darker could be responsible for the moon\'s weakness. Depending on the species, different abilities are gained to interfere with the other team. The app was made in React')
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$a,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://play.google.com/store/apps/details?id=com.HalloweenInc.HalloweenApp')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Halloween 2019')
+						]))
+				])),
+			A2(
+			$rtfeldman$elm_css$Html$Styled$h4,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text('Upon arriving, the guests are informed that different dimensions have been embedded into different rooms of the house. To find out why this happened, they must perform tasks in each dimension. As they investigate, they learn of a young girl who died in the house long ago, whose soul has gone missing...'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('The first few codes are: pumpkin031, wizard, rat, (in the vampire dimension, play the exorcist theme song), (in the ghost dimension, choose any answers). With the help of Daniel Lozano, we made an android app for the google play store.')
+						]))
+				]))
+		]));
 var $rtfeldman$elm_css$Html$Styled$Attributes$target = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('target');
 var $author$project$CVPage$viewHobbies = A2(
 	$rtfeldman$elm_css$Html$Styled$div,
@@ -9989,7 +10104,7 @@ var $author$project$CVPage$viewHobbies = A2(
 	_List_fromArray(
 		[
 			A2(
-			$rtfeldman$elm_css$Html$Styled$h3,
+			$rtfeldman$elm_css$Html$Styled$h1,
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -10045,7 +10160,7 @@ var $author$project$CVPage$viewHobbies = A2(
 				]),
 			_List_Nil),
 			A2(
-			$rtfeldman$elm_css$Html$Styled$h4,
+			$rtfeldman$elm_css$Html$Styled$h3,
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -10075,6 +10190,7 @@ var $author$project$CVPage$viewHobbies = A2(
 				]),
 			_List_Nil)
 		]));
+var $author$project$CVPage$Halloween = {$: 'Halloween'};
 var $author$project$CVPage$Hobbies = {$: 'Hobbies'};
 var $author$project$CVPage$SwitchTab = function (a) {
 	return {$: 'SwitchTab', a: a};
@@ -10171,6 +10287,19 @@ var $author$project$CVPage$viewTabs = function (mdl) {
 				_List_fromArray(
 					[
 						$rtfeldman$elm_css$Html$Styled$text('Hobbies')
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick(
+						$author$project$CVPage$SwitchTab($author$project$CVPage$Halloween)),
+						tabStyles,
+						chosenTab($author$project$CVPage$Halloween)
+					]),
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Halloween')
 					]))
 			]));
 };
@@ -10318,8 +10447,10 @@ var $author$project$CVPage$view = function (mdl) {
 										return $author$project$CVPage$viewAcademic;
 									case 'Work':
 										return $author$project$CVPage$viewWork;
-									default:
+									case 'Hobbies':
 										return $author$project$CVPage$viewHobbies;
+									default:
+										return $author$project$CVPage$viewHalloween;
 								}
 							}()
 							]))
