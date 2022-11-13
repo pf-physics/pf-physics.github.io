@@ -10330,19 +10330,32 @@ var $author$project$CVPage$viewWork = A2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text('My most recent position was at '),
 					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('https://www.smallbrooks.com/'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
+							$rtfeldman$elm_css$Html$Styled$text('I am currently employed at Improving Ottawa, also known as YoppWorks.')
 						])),
-					$rtfeldman$elm_css$Html$Styled$text(' where I was employed as a software developer, working on crowdfunding platforms.'),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Before this, I worked at '),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$a,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$href('https://www.smallbrooks.com/'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$target('_blank')
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Smallbrooks')
+								])),
+							$rtfeldman$elm_css$Html$Styled$text(' where I was employed as a software developer, working on crowdfunding platforms.')
+						])),
 					A2(
 					$rtfeldman$elm_css$Html$Styled$p,
 					_List_Nil,
@@ -10556,14 +10569,14 @@ var $author$project$MainPage$view = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$rtfeldman$elm_css$Html$Styled$text('I am a physicist and software developer interested in cosmology and gravity.')
+										$rtfeldman$elm_css$Html$Styled$text('I am a physicist and software developer.')
 									])),
 								A2(
 								$rtfeldman$elm_css$Html$Styled$p,
 								_List_Nil,
 								_List_fromArray(
 									[
-										$rtfeldman$elm_css$Html$Styled$text('I am currently searching for employment in physics or software development.')
+										$rtfeldman$elm_css$Html$Styled$text('My main interests lie in functional programming, cosmology and gravity.')
 									]))
 							]))
 					]))

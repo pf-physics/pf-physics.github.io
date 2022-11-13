@@ -153,9 +153,19 @@ viewWork : Html Msg
 viewWork =
   div [ css [ displayFlex, flexDirection column, justifyContent left, margin2 (px 0) (px 30)] ]
     [ h3 []
-      [ text "My most recent position was at "
+      [ p [] [ text "I am currently employed as a software developer at Improving Ottawa, also known as ",
+              a [ href "https://yoppworks.com/", Att.target "_blank" ] [ text "YoppWorks"]
+              , text "."
+              ]
+      , p [] [text "A recent project I worked on was ",
+              a [href "https://where2gocanada.ca/", Att.target "_blank"] [text "Where2GoCanada"],
+              text " which is a mobile web app whose purpose is to help Ukrainian refugees find the ideal place in Canada to move to, based on their employment experience."
+              ]
+      , p [ css [Css.height (px 20)]] []
+      , p [] [text "Before this, I worked at "
       , a [ href "https://www.smallbrooks.com/", Att.target "_blank"] [ text "Smallbrooks" ]
       , text " where I was employed as a software developer, working on crowdfunding platforms."
+      ]
       , p []
         [ text "An example of one of the platforms we've made is "
         , a [ href "https://crowdfunding.coop.dk/", Att.target "_blank" ] [ text "Coop Crowdfunding"]
